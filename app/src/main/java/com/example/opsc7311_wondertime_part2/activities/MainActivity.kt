@@ -15,9 +15,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        prog()
+        progressBar()
     }
-    fun prog(){zzzzz
+    private fun progressBar(){
         pb = findViewById(R.id.progressBar)
 
         val t = Timer()
@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
             override fun run() {
                 counter++
 
-                pb.setProgress(counter)
+                pb.progress = counter
 
                 if(counter == 100){
                     t.cancel()
@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        t.schedule(tt, 0, 10)
+        t.schedule(tt, 0, 100)
 
     }
 }

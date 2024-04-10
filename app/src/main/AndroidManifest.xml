@@ -16,6 +16,9 @@
             android:name=".activities.TimesheetsActivity"
             android:exported="false" />
         <activity
+            android:name=".activities.HomeActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.CategoriesActivity"
             android:exported="false" />
         <activity

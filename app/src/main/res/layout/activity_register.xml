@@ -4,9 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/backgroundWhite"
-    android:fontFamily="@font/mplus_rounded"
-    tools:context=".activities.LoginActivity">
+    tools:context=".activities.RegisterActivity">
 
     <ImageView
         android:id="@+id/imageView3"
@@ -22,10 +20,9 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="vertical"
-        android:elevation="20dp"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
-        android:layout_marginTop="150dp"
+        android:layout_marginTop="100dp"
         android:paddingHorizontal="16dp"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -39,14 +36,14 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Login"
+            android:text="Register"
             android:textColor="@color/black"
             android:fontFamily="@font/mplus_rounded"
             android:textStyle="bold"
             android:textSize="25sp" />
 
         <EditText
-            android:id="@+id/emailInput"
+            android:id="@+id/emailAdrdessInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -58,16 +55,15 @@
             android:padding="18dp"
             android:textColor="@color/black"
             android:textColorHint="@color/gray"
-            android:textSize="17sp" />
+            android:textSize="16sp" />
 
         <EditText
-            android:id="@+id/passwordInput"
+            android:id="@+id/password_Input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             android:background="@drawable/input_border"
             android:ems="10"
-            android:elevation="20dp"
             android:hint="Password"
             android:inputType="textPassword"
             android:fontFamily="@font/mplus_rounded"
@@ -76,28 +72,33 @@
             android:textColorHint="@color/gray"
             android:textSize="16sp" />
 
-
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <EditText
+            android:id="@+id/ConfirmPassword_Input"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:background="@drawable/input_border"
+            android:ems="10"
+            android:hint="Confirm Password"
+            android:inputType="textPassword"
+            android:padding="18dp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/gray"
+            android:fontFamily="@font/mplus_rounded"
+            android:textSize="16sp" />
 
-            <Button
-                android:id="@+id/Login_btn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32sp"
-                android:backgroundTint="@color/black"
-                android:elevation="20dp"
-                android:padding="15dp"
-                android:text="Login"
-                android:textColor="@color/white"
-                android:fontFamily="@font/mplus_rounded"
-                android:textSize="20sp"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
+        <Button
+            android:id="@+id/register_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32sp"
+            android:backgroundTint="@color/black"
+            android:padding="18dp"
+            android:elevation="2dp"
+            android:text="Register"
+            android:textColor="@color/white"
+            android:fontFamily="@font/mplus_rounded"
+            android:textSize="20sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -110,21 +111,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="Dont have an account?"
+                android:layout_marginEnd="30dp"
+                android:text="Have an account?"
                 android:textColor="@color/black"
                 android:fontFamily="@font/mplus_rounded"
                 android:textSize="18sp" />
 
-
             <TextView
-                android:id="@+id/register_link"
+                android:id="@+id/login_link"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/mplus_rounded"
                 android:layout_marginTop="2dp"
-                android:layout_marginStart="25dp"
-                android:text="Register"
+                android:text="Login"
                 android:textColor="@color/navPurple"
+                android:fontFamily="@font/mplus_rounded"
                 android:textSize="18sp" />
 
         </LinearLayout>
@@ -134,7 +134,6 @@
         android:id="@+id/imageView4"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:elevation="20dp"
         android:src="@drawable/background1"
         android:rotation="180"
         app:layout_constraintStart_toStartOf="parent"

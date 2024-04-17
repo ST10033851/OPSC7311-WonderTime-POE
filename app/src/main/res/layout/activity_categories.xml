@@ -43,8 +43,6 @@
         android:layout_height="match_parent"
         tools:context=".activities.CategoriesActivity">
 
-
-
         <com.google.android.material.bottomappbar.BottomAppBar
             android:id="@+id/bottomAppBar"
             android:layout_width="match_parent"

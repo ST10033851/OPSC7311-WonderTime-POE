@@ -19,4 +19,6 @@
     <color name="paleWhite">#E9E9E9</color>
     <color name="navPurple">#8570FA</color>
     <color name="backgroundWhite">#EDEEF2</color>
+    <color name="paleBlue">#A0ABD8</color>
+    <color name="purpleBorder">#6C38FB</color>
 </resources>

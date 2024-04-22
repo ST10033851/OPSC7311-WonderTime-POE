@@ -18,7 +18,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
         android:orientation="horizontal">
+
 
         <TextView
             android:id="@+id/createText"
@@ -43,25 +45,36 @@
         android:layout_marginTop="10dp"
         android:padding="10dp">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="290dp"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="10dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Date"
-                android:id="@+id/DateInput"/>
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/datePickerBtn"
-            android:layout_width="60dp"
+        <LinearLayout
+            android:layout_width="365dp"
             android:layout_height="60dp"
-            android:layout_marginLeft="10dp"
-            android:text="dd" />
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/input_border"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/emailAdrdessInput"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="DD - MM - YYYY"
+                android:background="@null"
+                android:inputType="textEmailAddress"
+                android:fontFamily="@font/mplus_rounded"
+                android:padding="18dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/gray"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/calender_icon"/>
+
+        </LinearLayout>
+
     </LinearLayout>
 
     <nl.joery.timerangepicker.TimeRangePicker
@@ -89,6 +102,7 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/timer_button"
                 android:hint="Start"
                 android:id="@+id/StartTimeInput"/>
 
@@ -102,6 +116,7 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/timer_button"
                 android:hint="End"
                 android:id="@+id/EndTimeInput"/>
 
@@ -130,17 +145,20 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="pic"
+                android:layout_marginRight="50dp"
+                android:background="@drawable/input_border"
+                android:hint="Add an image"
                 android:id="@+id/imageInput"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/UploadImageBtn"
-            android:layout_width="60dp"
+            android:layout_width="100dp"
             android:layout_height="60dp"
-            android:layout_marginLeft="10dp"
-            android:text="dd" />
+            android:layout_marginLeft="-40dp"
+
+            android:text="Submit" />
     </LinearLayout>
 
     <LinearLayout
@@ -158,7 +176,8 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Category"
+                android:background="@drawable/input_border"
+                android:hint="Choose Your Category"
                 android:id="@+id/CategoryInput"/>
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -179,20 +198,22 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Description"
+                android:background="@drawable/input_border"
+                android:hint="Add Your Description"
                 android:id="@+id/DescriptionInput"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 
     </LinearLayout>
+
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/saveTimesheet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginTop="30dp"
         android:layout_marginHorizontal="20dp"
-        android:text="save"
-        android:id="@+id/saveTimesheet"/>
-
+        android:text="save" />
 
 
 </LinearLayout>

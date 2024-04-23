@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import com.example.opsc7311_wondertime_part2.R
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class new_categorySheet : BottomSheetDialogFragment() {
+class new_category_Fragment : BottomSheetDialogFragment() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -15,6 +15,7 @@ class LoginActivity : AppCompatActivity() {
 
         val login_btn: Button = findViewById(R.id.Login_btn)
         val register_link: TextView = findViewById(R.id.register_link)
+
         login_btn.bringToFront()
 
         login_btn.setOnClickListener{

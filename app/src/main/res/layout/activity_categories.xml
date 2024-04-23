@@ -24,7 +24,8 @@
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_marginRight="10dp"
-                android:src="@drawable/timesheet_icon" />
+                android:src="@drawable/categories_icon"
+                android:background="@color/purple"/>
 
             <TextView
                 android:id="@+id/textView"
@@ -63,17 +64,17 @@
                 android:layout_gravity="center_horizontal"
                 android:gravity="center_vertical"
                 android:layout_marginBottom="20dp"
-                android:background="@drawable/input_border_light"
+                android:background="@drawable/input_border"
                 android:orientation="horizontal">
 
                 <EditText
-                    android:id="@+id/emailAdrdessInput"
+                    android:id="@+id/filterbydate"
                     android:layout_width="300dp"
                     android:layout_height="wrap_content"
                     android:ems="10"
                     android:hint="DD - MM - YYYY"
                     android:background="@null"
-                    android:inputType="textEmailAddress"
+                    android:inputType="date"
                     android:fontFamily="@font/mplus_rounded"
                     android:padding="18dp"
                     android:textColor="@color/black"
@@ -90,51 +91,52 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/t_recycler"
                 android:layout_width="match_parent"
-                android:layout_height="700dp" />
+                android:layout_height="550dp" />
+
+            <androidx.coordinatorlayout.widget.CoordinatorLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context=".activities.CategoriesActivity">
+
+
+                <com.google.android.material.bottomappbar.BottomAppBar
+                    android:id="@+id/bottomAppBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:layout_gravity="bottom"
+                    app:elevation="0dp"
+                    app:fabCradleMargin="20dp"
+                    app:fabCradleRoundedCornerRadius="50dp">
+
+                    <com.google.android.material.bottomnavigation.BottomNavigationView
+                        android:id="@+id/bottomNavigationView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="65dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginBottom="40dp"
+                        android:background="@drawable/navbar_background"
+                        android:elevation="10dp"
+                        app:itemIconSize="30dp"
+                        app:itemIconTint="@drawable/navbar_selector"
+                        app:itemTextColor="@color/white"
+                        app:labelVisibilityMode="labeled"
+                        app:menu="@menu/bottom_menu_plus" />
+
+                </com.google.android.material.bottomappbar.BottomAppBar>
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/plusCat"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/white"
+                    android:src="@drawable/add"
+                    app:layout_anchor="@id/bottomAppBar"
+                    app:maxImageSize="65dp" />
+
+            </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
         </LinearLayout>
 
     </LinearLayout>
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".activities.CategoriesActivity">
-
-        <com.google.android.material.bottomappbar.BottomAppBar
-            android:id="@+id/bottomAppBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            app:elevation="0dp"
-            app:fabCradleMargin="20dp"
-            app:fabCradleRoundedCornerRadius="50dp">
-
-            <com.google.android.material.bottomnavigation.BottomNavigationView
-                android:id="@+id/bottomNavigationView"
-                android:layout_width="wrap_content"
-                android:layout_height="65dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="30dp"
-                android:background="@drawable/navbar_background"
-                app:labelVisibilityMode="labeled"
-                android:elevation="10dp"
-                app:itemIconSize="30dp"
-                app:itemTextColor="@color/white"
-                app:itemIconTint="@drawable/navbar_selector"
-                app:menu="@menu/bottom_menu_plus" />
-
-        </com.google.android.material.bottomappbar.BottomAppBar>
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/plusCat"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
-            android:src="@drawable/add"
-            app:layout_anchor="@id/bottomAppBar"
-            app:maxImageSize="65dp" />
-
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>
-

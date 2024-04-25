@@ -113,7 +113,6 @@
         app:trp_sliderRangeGradientEnd="#f64f59"
         app:trp_clockFace="APPLE"
         app:trp_hourFormat="FORMAT_12"
-        app:trp_thumbSizeActiveGrow="1.0f"
         app:trp_thumbIconEnd="@drawable/round_play_arrow_24"
         app:trp_thumbIconStart="@drawable/round_stop_24"
         app:trp_thumbIconSize="25dp"

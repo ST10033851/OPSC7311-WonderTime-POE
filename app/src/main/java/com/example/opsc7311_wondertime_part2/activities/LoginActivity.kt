@@ -57,14 +57,7 @@ class LoginActivity : AppCompatActivity() {
             finish()
         }
 
-        val login_btn: Button = findViewById(R.id.Login_btn)
         val register_link: TextView = findViewById(R.id.register_link)
-
-        login_btn.bringToFront()
-
-        login_btn.setOnClickListener{
-            startActivity(Intent(this@LoginActivity, HomeActivity::class.java))
-        }
 
         register_link.setOnClickListener{
             startActivity(Intent(this@LoginActivity, RegisterActivity::class.java))

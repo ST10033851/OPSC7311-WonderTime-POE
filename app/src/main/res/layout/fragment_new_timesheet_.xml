@@ -234,7 +234,8 @@
 
             <EditText
                 android:layout_width="290dp"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
+                android:enabled="false"
                 android:ems="10"
                 android:hint="Add an image (Optional)"
                 android:background="@null"

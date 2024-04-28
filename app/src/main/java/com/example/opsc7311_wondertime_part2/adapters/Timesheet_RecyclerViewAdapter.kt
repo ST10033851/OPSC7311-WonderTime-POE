@@ -38,7 +38,7 @@ class TimesheetAdapter(val c: Context, val timesheetList: List<timesheetsModel>)
         holder.Description.text = newTimeSheet.description
         holder.startTime.text = newTimeSheet.startTime
         holder.endTime.text = newTimeSheet.endTime
-        holder.Image?.setImageResource(newTimeSheet.imageUri)
+        holder.Image?.setImageURI(newTimeSheet.imageUri)
 
     }
 }

@@ -13,9 +13,21 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_round_remove_24"
         android:layout_gravity="center|top"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
         android:scaleType="centerCrop"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/round_clear_24"
+            android:layout_marginLeft="24dp"
+            android:id="@+id/cancelButton"/>
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -59,7 +71,7 @@
             android:textSize="14sp"
             android:layout_marginStart="29dp"
             android:layout_marginBottom="5dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:textColor="@color/black"
             android:fontFamily="@font/mplus_rounded"
             android:textStyle="bold"
@@ -100,9 +112,9 @@
     </LinearLayout>
 
     <nl.joery.timerangepicker.TimeRangePicker
-        android:layout_marginStart="40dp"
+        android:layout_marginStart="72dp"
         android:id="@+id/picker"
-        android:layout_width="300dp"
+        android:layout_width="250dp"
         android:layout_height="2000dp"
         app:trp_thumbSize="25dp"
         app:trp_sliderWidth="29dp"
@@ -117,7 +129,7 @@
         app:trp_thumbIconStart="@drawable/round_stop_24"
         app:trp_thumbIconSize="25dp"
         android:layout_marginBottom="10dp"
-        app:trp_endTime="6:30"
+        app:trp_endTime="5:30"
         app:trp_startTime="22:00" />
 
     <LinearLayout
@@ -140,31 +152,27 @@
                 android:textSize="15sp"
                 />
 
-            <com.google.android.material.textfield.TextInputLayout
+            <EditText
+                android:id="@+id/StartTimeInput"
                 android:layout_width="130dp"
-                android:layout_height="60dp"
-                android:layout_marginEnd="100dp"
-                app:boxBackgroundMode="none">
+                android:layout_height="50dp"
+                android:layout_marginEnd="75dp"
+                android:layout_marginTop="5dp"
+                android:ems="10"
+                android:background="@drawable/timer_button"
+                android:fontFamily="@font/mplus_rounded"
+                android:padding="18dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/gray"
+                android:textSize="16sp" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/timer_button"
-                    android:elevation="30dp"
-                    android:gravity="center"
-                    android:hint="22:00"
-                    android:textColor="@color/black"
-                    android:textSize="18sp"
-                    android:id="@+id/StartTimeInput"/>
-
-            </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
 
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:orientation="vertical"
-            android:layout_marginRight="20dp"
+            android:layout_marginEnd="20dp"
             android:layout_height="match_parent">
 
             <TextView
@@ -175,24 +183,18 @@
                 android:textSize="15sp"
                 />
 
-            <com.google.android.material.textfield.TextInputLayout
+            <EditText
+                android:id="@+id/EndTimeInput"
                 android:layout_width="130dp"
-                android:layout_height="60dp"
-                android:layout_marginEnd="150dp"
-                app:boxBackgroundMode="none">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/timer_button"
-                    android:elevation="30dp"
-                    android:gravity="center"
-                    android:hint="22:00"
-                    android:textColor="@color/black"
-                    android:textSize="18sp"
-                    android:id="@+id/EndTimeInput"/>
-
-            </com.google.android.material.textfield.TextInputLayout>
+                android:layout_height="50dp"
+                android:layout_marginTop="5dp"
+                android:ems="10"
+                android:background="@drawable/timer_button"
+                android:fontFamily="@font/mplus_rounded"
+                android:padding="18dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/gray"
+                android:textSize="16sp" />
         </LinearLayout>
 
     </LinearLayout>
@@ -202,7 +204,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="5dp"
         android:padding="10dp">
 
         <TextView
@@ -219,7 +221,7 @@
 
         <LinearLayout
             android:layout_width="350dp"
-            android:layout_height="65dp"
+            android:layout_height="60dp"
             android:layout_gravity="center_horizontal"
             android:gravity="center_vertical"
             android:background="@drawable/input_border_light"
@@ -303,6 +305,5 @@
         </LinearLayout>
 
     </LinearLayout>
-
 
 </LinearLayout>

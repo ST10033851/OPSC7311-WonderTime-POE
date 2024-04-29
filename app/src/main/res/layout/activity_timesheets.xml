@@ -91,7 +91,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/t_recycler"
                 android:layout_width="match_parent"
-                android:layout_height="700dp" />
+                android:layout_height="match_parent" />
 
         </LinearLayout>
 
@@ -107,6 +107,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             app:elevation="0dp"
+            android:backgroundTint="@color/transparent"
             app:fabCradleMargin="20dp"
             app:fabCradleRoundedCornerRadius="50dp">
 

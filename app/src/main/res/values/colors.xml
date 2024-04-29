@@ -19,6 +19,7 @@
     <color name="paleWhite">#E9E9E9</color>
     <color name="navPurple">#8570FA</color>
     <color name="backgroundWhite">#E3E7F4</color>
+    <color name="transparent">#00FFFFFF</color>
 
     <style name="DialogAnimation">
         <item name="android:windowEnterAnimation">@anim/slide_in_bottom</item>

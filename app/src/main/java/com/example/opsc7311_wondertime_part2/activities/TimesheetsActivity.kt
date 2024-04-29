@@ -15,6 +15,7 @@ import android.view.Gravity
 import android.view.MotionEvent
 import android.view.ViewGroup
 import android.view.Window
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
@@ -54,6 +55,8 @@ class TimesheetsActivity : AppCompatActivity() {
         plusTimeSheetButton = findViewById(R.id.plusTimeSheet)
         category_name = intent.getStringExtra("categoryName").toString()
         val timesheetsFiltered = timesheetsList.filter { it.category.equals(category_name, ignoreCase = true) }
+        val resId = R.drawable.test_image
+        imageInput = Uri.parse("android.resource://${packageName}/$resId")
 
         bottomNav.selectedItemId = R.id.categories
         bottomNav.setOnItemSelectedListener { item ->
@@ -113,6 +116,18 @@ class TimesheetsActivity : AppCompatActivity() {
         val sdf = SimpleDateFormat(myFormat, Locale.UK)
         val myCalender = Calendar.getInstance()
 
+        val errorDialog = Dialog(this)
+        errorDialog.setContentView(R.layout.error_dialog)
+        errorDialog.setCancelable(false)
+
+        val errorMessageTextView = errorDialog.findViewById<TextView>(R.id.ErrorDescription)
+        errorMessageTextView.text = "Please enter all details"
+
+        val dismissButton = errorDialog.findViewById<Button>(R.id.ErrorDone)
+        dismissButton.setOnClickListener {
+            errorDialog.dismiss()
+        }
+
         val datePicker = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
             myCalender.set(Calendar.YEAR, year)
             myCalender.set(Calendar.MONTH,month)
@@ -123,18 +138,23 @@ class TimesheetsActivity : AppCompatActivity() {
         }
 
         TimepickerBtn.setOnTimeChangeListener(object : TimeRangePicker.OnTimeChangeListener {
+            var StartTime = 0
+            var EndTime = 0
+
             override fun onStartTimeChange(endTime: TimeRangePicker.Time) {
                 val timeString = "${endTime.hour}:${endTime.minute}"
                 endTimeInput.setText(timeString)
+                EndTime = endTime.hour
             }
 
             override fun onEndTimeChange(startTime: TimeRangePicker.Time) {
                 val timeString = "${startTime.hour}:${startTime.minute}"
                 startTimeInput.setText(timeString)
+                StartTime = startTime.hour
             }
 
             override fun onDurationChange(duration: TimeRangePicker.TimeDuration) {
-                Timesheetduration = duration.hour
+                Timesheetduration = EndTime - StartTime
             }
         })
 
@@ -158,13 +178,20 @@ class TimesheetsActivity : AppCompatActivity() {
             val category = CategoryInput
             val imageResource = imageInput
             val newTimesheet = timesheetsModel(date, startTime, endTime, description, category, imageResource)
-            TimesheetRepository.addTimesheet(newTimesheet)
-            timesheetAdapter.notifyDataSetChanged()
 
-            CategoriesRepository.calcTotalHours(category_name, Timesheetduration)
+            if(date.isEmpty() || description.isEmpty() || startTime.isEmpty() || endTime.isEmpty()){
+                errorDialog.show()
+            }
+            else{
+                TimesheetRepository.addTimesheet(newTimesheet)
+                timesheetAdapter.notifyDataSetChanged()
 
-            updateAdapter()
-            dialog.dismiss()
+                CategoriesRepository.calcTotalHours(category_name, Timesheetduration)
+
+                updateAdapter()
+                dialog.dismiss()
+            }
+
         }
 
 
@@ -185,7 +212,9 @@ class TimesheetsActivity : AppCompatActivity() {
             imageView.setImageURI(uri)
             imageInput = uri
         } else {
-            imageView.setImageResource(R.drawable.test_image)
+            val resId = R.drawable.test_image
+            imageInput = Uri.parse("android.resource://${packageName}/$resId")
+
         }
     }
 

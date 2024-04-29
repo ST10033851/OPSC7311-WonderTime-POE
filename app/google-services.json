@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "280538481397",
+    "project_id": "opsc7311-wondertime-part2",
+    "storage_bucket": "opsc7311-wondertime-part2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:280538481397:android:ab16c611cc2d636cd1fbbc",
+        "android_client_info": {
+          "package_name": "com.example.opsc7311_wondertime_part2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCp8-VAys8QXUK5x8pS_jdbwK9dGwr_uJc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

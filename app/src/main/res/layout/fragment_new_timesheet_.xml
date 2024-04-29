@@ -85,7 +85,7 @@
         app:trp_thumbIconEnd="@drawable/baseline_access_alarm_24"
         app:trp_thumbIconStart="@drawable/baseline_nights_stay_24"
         app:trp_endTime="6:30"
-        app:trp_startTime="22:00"/>
+        app:trp_startTime="22:00" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -214,4 +214,6 @@
         android:layout_marginTop="30dp"
         android:layout_marginHorizontal="20dp"
         android:text="save" />
+
+
 </LinearLayout>

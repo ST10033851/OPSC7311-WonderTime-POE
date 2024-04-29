@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/backgroundWhite"
     tools:context=".activities.CategoriesActivity">
 
     <LinearLayout
@@ -89,7 +90,7 @@
             </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/t_recycler"
+                android:id="@+id/c_recycler"
                 android:layout_width="match_parent"
                 android:layout_height="550dp" />
 

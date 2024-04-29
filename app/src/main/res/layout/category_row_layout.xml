@@ -45,22 +45,42 @@
                     android:layout_marginStart="10dp"
                     android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/Catname"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginTop="10dp"
-                        android:text="Training"
-                        android:textSize="25sp" />
+                        android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/textView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Total hours spent: 10"
-                        android:textSize="16sp" />
+                        <TextView
+                            android:id="@+id/Catname"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginTop="10dp"
+                            android:text="@string/Training"
+                            android:textSize="25sp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/textView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/TotalHoursSpent"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/HoursWorkedText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:text="@string/_0"
+                            android:textSize="16sp" />
+                    </LinearLayout>
                 </LinearLayout>
 
             </LinearLayout>

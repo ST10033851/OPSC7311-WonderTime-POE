@@ -126,7 +126,7 @@
         </com.google.android.material.bottomappbar.BottomAppBar>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/plusCat"
+            android:id="@+id/plusTimeSheet"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/white"

@@ -67,13 +67,13 @@
                 android:orientation="horizontal">
 
                 <EditText
-                    android:id="@+id/emailAdrdessInput"
+                    android:id="@+id/timesheetRangeInput"
                     android:layout_width="300dp"
                     android:layout_height="wrap_content"
                     android:ems="10"
                     android:hint="DD - MM - YYYY"
                     android:background="@null"
-                    android:inputType="textEmailAddress"
+                    android:inputType="text"
                     android:fontFamily="@font/mplus_rounded"
                     android:padding="18dp"
                     android:textColor="@color/black"
@@ -83,6 +83,7 @@
                 <ImageView
                     android:layout_width="50dp"
                     android:layout_height="50dp"
+                    android:id="@+id/TimesheetRangePicker"
                     android:src="@drawable/calender_icon"/>
 
             </LinearLayout>

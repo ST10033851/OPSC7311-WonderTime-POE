@@ -32,29 +32,36 @@ import com.example.opsc7311_wondertime_part2.models.TimesheetRepository
 import com.example.opsc7311_wondertime_part2.models.timesheetsModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import nl.joery.timerangepicker.TimeRangePicker
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 class TimesheetsActivity : AppCompatActivity() {
 
-    val timesheetsList = TimesheetRepository.getTimesheetsList()
+    private val timesheetsList = TimesheetRepository.getTimesheetsList()
     private lateinit var timesheetAdapter: TimesheetAdapter
     private lateinit var recyclerView: RecyclerView
     private lateinit var plusTimeSheetButton: FloatingActionButton
     private lateinit var imageView: ImageView
     private lateinit var imageInput : Uri
     private lateinit var category_name: String
+    private lateinit var rangeInput: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_timesheets)
 
         val bottomNav: BottomNavigationView = findViewById(R.id.bottomNavigationView)
+        val timesheetRangePicker = findViewById<ImageView>(R.id.TimesheetRangePicker)
+        rangeInput  = findViewById<EditText>(R.id.timesheetRangeInput)
         plusTimeSheetButton = findViewById(R.id.plusTimeSheet)
         category_name = intent.getStringExtra("categoryName").toString()
+
         val timesheetsFiltered = timesheetsList.filter { it.category.equals(category_name, ignoreCase = true) }
+
         val resId = R.drawable.test_image
         imageInput = Uri.parse("android.resource://${packageName}/$resId")
 
@@ -89,10 +96,65 @@ class TimesheetsActivity : AppCompatActivity() {
         recyclerView.adapter = timesheetAdapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 
+        timesheetRangePicker.setOnClickListener{ showRangePicker() }
+
         plusTimeSheetButton.setOnClickListener { showBottomDialog() }
 
 
     }
+    private fun showRangePicker() {
+
+
+        val materialDatePicker = MaterialDatePicker.Builder.dateRangePicker()
+            .setSelection(androidx.core.util.Pair(
+                MaterialDatePicker.thisMonthInUtcMilliseconds(),
+                MaterialDatePicker.todayInUtcMilliseconds()
+            ))
+            .build()
+
+        materialDatePicker.addOnPositiveButtonClickListener { selection ->
+            val date1 = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                .format(Date(selection.first ?: 0))
+            val date2 = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                .format(Date(selection.second ?: 0))
+
+
+
+            filterToDateRange(date1, date2)
+
+        }
+
+        materialDatePicker.show(supportFragmentManager, "tag")
+    }
+
+    private fun filterToDateRange(date1: String, date2: String){
+        val errorDialog = Dialog(this)
+        errorDialog.setContentView(R.layout.error_dialog)
+        errorDialog.setCancelable(false)
+        val errorMessageTextView = errorDialog.findViewById<TextView>(R.id.ErrorDescription)
+        errorMessageTextView.text = getString(R.string.there_are_no_timesheets_entered)
+
+        val dismissButton = errorDialog.findViewById<Button>(R.id.ErrorDone)
+        dismissButton.setOnClickListener {
+            errorDialog.dismiss()
+        }
+
+        if(timesheetsList.isEmpty()){
+            errorDialog.show()
+        }
+        else{
+            rangeInput.setText(getString(R.string.to, date1, date2))
+            val timesheetsList = TimesheetRepository.getTimesheetsList()
+            val timesheetsFiltered = timesheetsList.filter { it.date > date1 && it.date < date2 && it.category.equals(category_name, ignoreCase = true)}
+            timesheetAdapter.notifyDataSetChanged()
+            recyclerView = findViewById(R.id.t_recycler)
+            timesheetAdapter = TimesheetAdapter(this, timesheetsFiltered )
+            recyclerView.adapter = timesheetAdapter
+            recyclerView.layoutManager = LinearLayoutManager(this)
+        }
+
+    }
+
 
     private fun showBottomDialog() {
         val dialog = Dialog(this)
@@ -116,17 +178,7 @@ class TimesheetsActivity : AppCompatActivity() {
         val sdf = SimpleDateFormat(myFormat, Locale.UK)
         val myCalender = Calendar.getInstance()
 
-        val errorDialog = Dialog(this)
-        errorDialog.setContentView(R.layout.error_dialog)
-        errorDialog.setCancelable(false)
 
-        val errorMessageTextView = errorDialog.findViewById<TextView>(R.id.ErrorDescription)
-        errorMessageTextView.text = "Please enter all details"
-
-        val dismissButton = errorDialog.findViewById<Button>(R.id.ErrorDone)
-        dismissButton.setOnClickListener {
-            errorDialog.dismiss()
-        }
 
         val datePicker = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
             myCalender.set(Calendar.YEAR, year)
@@ -180,6 +232,17 @@ class TimesheetsActivity : AppCompatActivity() {
             val newTimesheet = timesheetsModel(date, startTime, endTime, description, category, imageResource)
 
             if(date.isEmpty() || description.isEmpty() || startTime.isEmpty() || endTime.isEmpty()){
+                val errorDialog = Dialog(this)
+                errorDialog.setContentView(R.layout.error_dialog)
+                errorDialog.setCancelable(false)
+                val errorMessageTextView = errorDialog.findViewById<TextView>(R.id.ErrorDescription)
+                errorMessageTextView.text = "Please enter all fields"
+
+                val dismissButton = errorDialog.findViewById<Button>(R.id.ErrorDone)
+                dismissButton.setOnClickListener {
+                    errorDialog.dismiss()
+                }
+
                 errorDialog.show()
             }
             else{

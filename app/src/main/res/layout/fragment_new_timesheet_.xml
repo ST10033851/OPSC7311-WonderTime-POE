@@ -158,10 +158,9 @@
                 android:layout_height="50dp"
                 android:layout_marginEnd="75dp"
                 android:layout_marginTop="5dp"
-                android:ems="10"
+                android:gravity="center"
                 android:background="@drawable/timer_button"
                 android:fontFamily="@font/mplus_rounded"
-                android:padding="18dp"
                 android:textColor="@color/black"
                 android:textColorHint="@color/gray"
                 android:textSize="16sp" />
@@ -187,16 +186,14 @@
                 android:id="@+id/EndTimeInput"
                 android:layout_width="130dp"
                 android:layout_height="50dp"
+                android:layout_marginEnd="75dp"
                 android:layout_marginTop="5dp"
-                android:ems="10"
+                android:gravity="center"
                 android:background="@drawable/timer_button"
                 android:fontFamily="@font/mplus_rounded"
-                android:padding="18dp"
                 android:textColor="@color/black"
                 android:textColorHint="@color/gray"
-                android:textSize="16sp"
-                android:autofillHints=""
-                android:inputType="text"/>
+                android:textSize="16sp"/>
         </LinearLayout>
 
     </LinearLayout>

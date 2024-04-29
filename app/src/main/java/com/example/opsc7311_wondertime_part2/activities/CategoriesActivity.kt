@@ -1,5 +1,6 @@
 package com.example.opsc7311_wondertime_part2.activities
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
@@ -11,11 +12,13 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.util.Pair
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.opsc7311_wondertime_part2.R
@@ -24,6 +27,11 @@ import com.example.opsc7311_wondertime_part2.databinding.ActivityCategoriesBindi
 import com.example.opsc7311_wondertime_part2.models.CategoriesRepository
 import com.example.opsc7311_wondertime_part2.models.categoriesModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.datepicker.MaterialDatePicker
+import java.text.MessageFormat
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class CategoriesActivity : AppCompatActivity() {
 
@@ -70,14 +78,53 @@ class CategoriesActivity : AppCompatActivity() {
         recyclerView.adapter = categoryAdapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 
+        binding.CategoryRangePicker.setOnClickListener{ showRangePicker() }
+
         binding.plusCat.setOnClickListener { showBottomDialog() }
 
     }
+
+    @SuppressLint("SetTextI18n")
+    private fun showRangePicker() {
+        val rangeInput = findViewById<EditText>(R.id.categoryRangeInput)
+
+        val materialDatePicker = MaterialDatePicker.Builder.dateRangePicker()
+            .setSelection(androidx.core.util.Pair(
+                MaterialDatePicker.thisMonthInUtcMilliseconds(),
+                MaterialDatePicker.todayInUtcMilliseconds()
+            ))
+            .build()
+
+        materialDatePicker.addOnPositiveButtonClickListener { selection ->
+            val date1 = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                .format(Date(selection.first ?: 0))
+            val date2 = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                .format(Date(selection.second ?: 0))
+
+            rangeInput.setText("$date1 to $date2")
+
+        }
+
+        materialDatePicker.show(supportFragmentManager, "tag")
+    }
+
 
     private fun showBottomDialog() {
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.fragment_new_category_)
+
+        val errorDialog = Dialog(this)
+        errorDialog.setContentView(R.layout.error_dialog)
+        errorDialog.setCancelable(false)
+
+        val errorMessageTextView = errorDialog.findViewById<TextView>(R.id.ErrorDescription)
+        errorMessageTextView.text = "Please enter all details"
+
+        val dismissButton = errorDialog.findViewById<Button>(R.id.ErrorDone)
+        dismissButton.setOnClickListener {
+            errorDialog.dismiss()
+        }
 
         // Initialize views after inflating the dialog layout
         val name = dialog.findViewById<EditText>(R.id.categoryNameInput)
@@ -91,7 +138,7 @@ class CategoriesActivity : AppCompatActivity() {
                 categoryAdapter.notifyDataSetChanged()
                 dialog.dismiss()
             } else {
-                Toast.makeText(this@CategoriesActivity, "Please enter a category name.", Toast.LENGTH_SHORT).show()
+                errorDialog.show()
             }
         }
 

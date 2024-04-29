@@ -5,4 +5,6 @@
     <string name="Training">Training</string>
     <string name="TotalHoursSpent">Total hours spent:</string>
     <string name="_0">0</string>
+    <string name="there_are_no_timesheets_entered">There are no timesheets entered</string>
+    <string name="to">%1$s to %2$s</string>
 </resources>

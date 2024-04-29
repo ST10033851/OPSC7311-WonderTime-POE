@@ -124,7 +124,7 @@
         app:trp_sliderRangeGradientMiddle="#4568DC"
         app:trp_sliderRangeGradientEnd="#f64f59"
         app:trp_clockFace="APPLE"
-        app:trp_hourFormat="FORMAT_12"
+        app:trp_hourFormat="FORMAT_24"
         app:trp_thumbIconEnd="@drawable/round_play_arrow_24"
         app:trp_thumbIconStart="@drawable/round_stop_24"
         app:trp_thumbIconSize="25dp"
@@ -194,7 +194,9 @@
                 android:padding="18dp"
                 android:textColor="@color/black"
                 android:textColorHint="@color/gray"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:autofillHints=""
+                android:inputType="text"/>
         </LinearLayout>
 
     </LinearLayout>

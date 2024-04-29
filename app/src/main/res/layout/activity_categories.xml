@@ -98,8 +98,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 tools:context=".activities.CategoriesActivity">
-
-
                 <com.google.android.material.bottomappbar.BottomAppBar
                     android:id="@+id/bottomAppBar"
                     android:layout_width="match_parent"
@@ -109,13 +107,12 @@
                     app:elevation="0dp"
                     app:fabCradleMargin="20dp"
                     app:fabCradleRoundedCornerRadius="50dp">
-
                     <com.google.android.material.bottomnavigation.BottomNavigationView
                         android:id="@+id/bottomNavigationView"
                         android:layout_width="wrap_content"
                         android:layout_height="65dp"
                         android:layout_marginEnd="20dp"
-                        android:layout_marginBottom="40dp"
+                        android:layout_marginBottom="20dp"
                         android:background="@drawable/navbar_background"
                         android:elevation="10dp"
                         app:itemIconSize="30dp"
@@ -123,9 +120,7 @@
                         app:itemTextColor="@color/white"
                         app:labelVisibilityMode="labeled"
                         app:menu="@menu/bottom_menu_plus" />
-
                 </com.google.android.material.bottomappbar.BottomAppBar>
-
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/plusCat"
                     android:layout_width="80dp"
@@ -134,10 +129,11 @@
                     android:src="@drawable/add"
                     app:layout_anchor="@id/bottomAppBar"
                     app:maxImageSize="65dp" />
-
             </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
         </LinearLayout>
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+

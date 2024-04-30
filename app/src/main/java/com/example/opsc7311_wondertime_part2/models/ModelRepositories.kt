@@ -24,10 +24,15 @@ object CategoriesRepository {
         categoriesList.add(category)
     }
 
-    fun calcTotalHours(categoryName: String, hoursWorked: Int): Boolean {
+    fun calcTotalHours(categoryName: String, timesheetsList: List<timesheetsModel>): Boolean {
         val category = categoriesList.find { it.name == categoryName }
+
+        val totalDuration = timesheetsList
+            .filter { it.category.equals(categoryName, ignoreCase = true) }
+            .sumOf { it.duration }
+
         if (category != null) {
-            category.totalHours += hoursWorked
+            category.totalHours = totalDuration
             return true
         }
         return false

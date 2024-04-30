@@ -19,7 +19,8 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_round_remove_24"
             android:layout_gravity="center|top"
-            android:scaleType="centerCrop"/>
+            android:scaleType="centerCrop"
+            android:contentDescription="@string/todo" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -30,8 +31,9 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:src="@drawable/round_clear_24"
-                android:layout_marginLeft="24dp"
-                android:id="@+id/cancelButton"/>
+                android:layout_marginStart="24dp"
+                android:id="@+id/cancelButton"
+                android:contentDescription="@string/todo" />
 
         </LinearLayout>
 
@@ -46,16 +48,16 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="80dp"
                 android:textAlignment="viewStart"
-                android:text="Create Timesheet"
+                android:text="@string/create_timesheet"
                 android:textColor="@color/black"
                 android:layout_marginTop="5dp"
-                android:textSize="25dp" />
+                android:textSize="25sp" />
 
             <TextView
                 android:id="@+id/saveTimesheet"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Create"
+                android:text="@string/create"
                 android:textColor="@color/purple"
                 android:layout_marginTop="5dp"
                 android:textSize="20sp" />
@@ -78,7 +80,7 @@
                 android:textColor="@color/black"
                 android:fontFamily="@font/mplus_rounded"
                 android:textStyle="bold"
-                android:text="Date:"
+                android:text="@string/date"
                 />
 
             <LinearLayout
@@ -95,9 +97,9 @@
                     android:layout_width="290dp"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:hint="DD - MM - YYYY"
+                    android:hint="@string/dd_mm_yyyy"
+                    android:enabled="false"
                     android:background="@null"
-                    android:inputType="textEmailAddress"
                     android:fontFamily="@font/mplus_rounded"
                     android:padding="18dp"
                     android:textColor="@color/black"
@@ -149,7 +151,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Start:"
+                    android:text="@string/start"
                     android:textColor="@color/black"
                     android:textSize="15sp"
                     />
@@ -179,7 +181,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
-                    android:text="End:"
+                    android:text="@string/end"
                     android:textSize="15sp"
                     />
 
@@ -239,7 +241,7 @@
                     android:layout_height="50dp"
                     android:enabled="false"
                     android:ems="10"
-                    android:hint="Add an image (Optional)"
+                    android:hint="@string/add_an_image_optional"
                     android:background="@null"
                     android:inputType="textEmailAddress"
                     android:fontFamily="@font/mplus_rounded"
@@ -278,7 +280,7 @@
                 android:textColor="@color/black"
                 android:fontFamily="@font/mplus_rounded"
                 android:textStyle="bold"
-                android:text="Desciption:"
+                android:text="@string/desciption"
                 />
 
             <LinearLayout
@@ -290,10 +292,10 @@
 
                 <EditText
                     android:id="@+id/DescriptionInput"
-                    android:layout_width="290dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:hint="Enter a description"
+                    android:hint="@string/enter_a_description"
                     android:background="@null"
                     android:fontFamily="@font/mplus_rounded"
                     android:padding="18dp"

@@ -33,6 +33,7 @@
                             app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintVertical_bias="0.092"
                             app:srcCompat="@drawable/logo" />
+
                         <ImageView
                             android:id="@+id/themeSelecter"
                             android:layout_width="wrap_content"
@@ -229,17 +230,19 @@
 
                 </LinearLayout>
 
+
                 <androidx.coordinatorlayout.widget.CoordinatorLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     tools:context=".activities.CategoriesActivity">
+
                         <com.google.android.material.bottomappbar.BottomAppBar
                             android:id="@+id/bottomAppBar"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="bottom"
-                            app:elevation="0dp"
                             android:backgroundTint="@color/transparent"
+                            app:elevation="0dp"
                             app:fabCradleMargin="20dp"
                             app:fabCradleRoundedCornerRadius="50dp">
 
@@ -250,14 +253,38 @@
                                     android:layout_marginEnd="20dp"
                                     android:layout_marginBottom="30dp"
                                     android:background="@drawable/navbar_background"
-                                    app:labelVisibilityMode="labeled"
                                     android:elevation="10dp"
                                     app:itemIconSize="30dp"
-                                    app:itemTextColor="@color/white"
                                     app:itemIconTint="@drawable/navbar_selector"
+                                    app:itemTextColor="@color/white"
+                                    app:labelVisibilityMode="labeled"
                                     app:menu="@menu/bottom_menu" />
 
                         </com.google.android.material.bottomappbar.BottomAppBar>
+
+                        <Button
+                            android:id="@+id/saveDailyGoal"
+                            android:layout_width="200dp"
+                            android:layout_height="50dp"
+                            android:layout_marginLeft="112dp"
+                            android:layout_marginTop="-5dp"
+                            android:backgroundTint="@color/black"
+                            android:textSize="14sp"
+                            android:fontFamily="@font/mplus_rounded"
+                            android:text="Save daily goal" />
+
                 </androidx.coordinatorlayout.widget.CoordinatorLayout>
         </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+
+
+
+
+
+
+
+

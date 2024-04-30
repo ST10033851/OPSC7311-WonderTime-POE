@@ -72,6 +72,7 @@
                     android:layout_height="wrap_content"
                     android:ems="10"
                     android:hint="DD - MM - YYYY"
+                    android:enabled="false"
                     android:background="@null"
                     android:inputType="text"
                     android:fontFamily="@font/mplus_rounded"

@@ -30,15 +30,17 @@
                 android:orientation="horizontal"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <LinearLayout
+                <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/categoryColor"
                     android:layout_width="30dp"
-                    android:layout_height="60dp"
+                    android:layout_height="50dp"
+                    android:adjustViewBounds="true"
                     android:layout_marginStart="10dp"
-                    android:background="@drawable/categories_color_bar"
-                    android:orientation="vertical">
-
-                </LinearLayout>
+                    android:scaleType="centerCrop"
+                    android:elevation="2dp"
+                    android:background="@color/purple"
+                    app:shapeAppearanceOverlay="@style/RoundedSquare"
+                    />
 
                 <LinearLayout
                     android:layout_width="match_parent"

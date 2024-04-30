@@ -12,12 +12,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.opsc7311_wondertime_part2.R
 import com.example.opsc7311_wondertime_part2.activities.TimesheetsActivity
 import com.example.opsc7311_wondertime_part2.models.categoriesModel
+import com.google.android.material.imageview.ShapeableImageView
 
-class categoryAdapter(val c: Context, val categoryList: ArrayList<categoriesModel>) : RecyclerView.Adapter<categoryAdapter.CatViewHolder>(){
+class categoryAdapter(val c: Context, private val categoryList: ArrayList<categoriesModel>) : RecyclerView.Adapter<categoryAdapter.CatViewHolder>(){
     inner class CatViewHolder(val v: View): RecyclerView.ViewHolder(v){
-        val name = v.findViewById<TextView>(R.id.Catname)
-        val TotalHours = v.findViewById<TextView>(R.id.HoursWorkedText)
-        val color = v.findViewById<LinearLayout>(R.id.categoryColor)
+        val name: TextView = v.findViewById(R.id.Catname)
+        val TotalHours: TextView = v.findViewById(R.id.HoursWorkedText)
+        val color: ShapeableImageView = v.findViewById(R.id.categoryColor)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CatViewHolder {

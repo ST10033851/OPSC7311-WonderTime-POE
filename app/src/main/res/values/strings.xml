@@ -7,4 +7,14 @@
     <string name="_0">0</string>
     <string name="there_are_no_timesheets_entered">There are no timesheets entered</string>
     <string name="to">%1$s to %2$s</string>
+    <string name="enter_a_description">Enter a description</string>
+    <string name="desciption">Desciption:</string>
+    <string name="add_an_image_optional">Add an image (Optional)</string>
+    <string name="end">End:</string>
+    <string name="start">Start:</string>
+    <string name="dd_mm_yyyy">DD - MM - YYYY</string>
+    <string name="date">Date:</string>
+    <string name="create">Create</string>
+    <string name="create_timesheet">Create Timesheet</string>
+    <string name="todo">TODO</string>
 </resources>

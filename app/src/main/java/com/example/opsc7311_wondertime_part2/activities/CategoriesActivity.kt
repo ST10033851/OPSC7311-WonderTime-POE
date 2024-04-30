@@ -18,9 +18,12 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.opsc7311_wondertime_part2.R
+import com.example.opsc7311_wondertime_part2.adapters.TimesheetAdapter
 import com.example.opsc7311_wondertime_part2.adapters.categoryAdapter
 import com.example.opsc7311_wondertime_part2.databinding.ActivityCategoriesBinding
 import com.example.opsc7311_wondertime_part2.models.CategoriesRepository
+import com.example.opsc7311_wondertime_part2.models.CategoriesRepository.calcTotalHours
+import com.example.opsc7311_wondertime_part2.models.TimesheetRepository
 import com.example.opsc7311_wondertime_part2.models.categoriesModel
 import com.github.dhaval2404.colorpicker.MaterialColorPickerDialog
 import com.github.dhaval2404.colorpicker.model.ColorShape
@@ -37,12 +40,15 @@ class CategoriesActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var categoryAdapter: categoryAdapter
     private lateinit var drawable : ColorDrawable
+    private lateinit var rangeInput: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding: ActivityCategoriesBinding = ActivityCategoriesBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        drawable = ColorDrawable(Color.parseColor("#6E3FF1"))
+        rangeInput  = findViewById(R.id.categoryRangeInput)
         val bottomNav: BottomNavigationView = findViewById(R.id.bottomNavigationView)
         bottomNav.selectedItemId = R.id.categories
         bottomNav.setOnItemSelectedListener { item ->
@@ -82,7 +88,6 @@ class CategoriesActivity : AppCompatActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun showRangePicker() {
-        val rangeInput = findViewById<EditText>(R.id.categoryRangeInput)
 
         val materialDatePicker = MaterialDatePicker.Builder.dateRangePicker()
             .setSelection(androidx.core.util.Pair(
@@ -97,11 +102,49 @@ class CategoriesActivity : AppCompatActivity() {
             val date2 = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
                 .format(Date(selection.second ?: 0))
 
-            rangeInput.setText("$date1 to $date2")
+            filterToDateRange(date1, date2)
 
         }
 
         materialDatePicker.show(supportFragmentManager, "tag")
+    }
+
+    private fun filterToDateRange(date1: String, date2: String){
+        val errorDialog = Dialog(this)
+        errorDialog.setContentView(R.layout.error_dialog)
+        errorDialog.setCancelable(false)
+        val errorMessageTextView = errorDialog.findViewById<TextView>(R.id.ErrorDescription)
+        errorMessageTextView.text = getString(R.string.there_are_no_categories_entered)
+
+        val dismissButton = errorDialog.findViewById<Button>(R.id.ErrorDone)
+        dismissButton.setOnClickListener {
+            errorDialog.dismiss()
+        }
+
+        if(categoriesList.isEmpty()){
+            errorDialog.show()
+        }
+        else{
+            rangeInput.setText(getString(R.string.to, date1, date2))
+            val timesheetsList = TimesheetRepository.getTimesheetsList()
+            val timesheetsFiltered = timesheetsList.filter {
+                val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                val itemDate = dateFormat.parse(it.date)
+                val startDate = dateFormat.parse(date1)
+                val endDate = dateFormat.parse(date2)
+
+                itemDate != null && itemDate.after(startDate) && itemDate.before(endDate)
+            }
+
+            for (category in categoriesList) {
+                calcTotalHours(category.name, timesheetsFiltered)
+            }
+
+            categoryAdapter.notifyDataSetChanged()
+            recyclerView.adapter = categoryAdapter
+            recyclerView.layoutManager = LinearLayoutManager(this)
+        }
+
     }
 
 

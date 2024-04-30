@@ -8,5 +8,6 @@ data class timesheetsModel(
     val endTime: String ,
     val description: String,
     val category: String,
-    val imageUri: Uri
+    val imageUri: Uri,
+    val duration: Int
 )

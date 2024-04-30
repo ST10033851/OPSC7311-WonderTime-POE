@@ -104,7 +104,6 @@ class TimesheetsActivity : AppCompatActivity() {
     }
     private fun showRangePicker() {
 
-
         val materialDatePicker = MaterialDatePicker.Builder.dateRangePicker()
             .setSelection(androidx.core.util.Pair(
                 MaterialDatePicker.thisMonthInUtcMilliseconds(),
@@ -117,8 +116,6 @@ class TimesheetsActivity : AppCompatActivity() {
                 .format(Date(selection.first ?: 0))
             val date2 = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
                 .format(Date(selection.second ?: 0))
-
-
 
             filterToDateRange(date1, date2)
 
@@ -145,7 +142,16 @@ class TimesheetsActivity : AppCompatActivity() {
         else{
             rangeInput.setText(getString(R.string.to, date1, date2))
             val timesheetsList = TimesheetRepository.getTimesheetsList()
-            val timesheetsFiltered = timesheetsList.filter { it.date > date1 && it.date < date2 && it.category.equals(category_name, ignoreCase = true)}
+            val timesheetsFiltered = timesheetsList.filter {
+                val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                val itemDate = dateFormat.parse(it.date)
+                val startDate = dateFormat.parse(date1)
+                val endDate = dateFormat.parse(date2)
+
+                itemDate != null && itemDate.after(startDate) && itemDate.before(endDate)
+                        && it.category.equals(category_name, ignoreCase = true)
+            }
+
             timesheetAdapter.notifyDataSetChanged()
             recyclerView = findViewById(R.id.t_recycler)
             timesheetAdapter = TimesheetAdapter(this, timesheetsFiltered )
@@ -229,7 +235,7 @@ class TimesheetsActivity : AppCompatActivity() {
             val endTime = endTimeInput.text.toString()
             val category = CategoryInput
             val imageResource = imageInput
-            val newTimesheet = timesheetsModel(date, startTime, endTime, description, category, imageResource)
+            val newTimesheet = timesheetsModel(date, startTime, endTime, description, category, imageResource, Timesheetduration)
 
             if(date.isEmpty() || description.isEmpty() || startTime.isEmpty() || endTime.isEmpty()){
                 val errorDialog = Dialog(this)
@@ -249,7 +255,7 @@ class TimesheetsActivity : AppCompatActivity() {
                 TimesheetRepository.addTimesheet(newTimesheet)
                 timesheetAdapter.notifyDataSetChanged()
 
-                CategoriesRepository.calcTotalHours(category_name, Timesheetduration)
+                CategoriesRepository.calcTotalHours(category_name, timesheetsList)
 
                 updateAdapter()
                 dialog.dismiss()

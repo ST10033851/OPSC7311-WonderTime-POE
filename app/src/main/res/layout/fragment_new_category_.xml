@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -102,6 +103,71 @@
         </LinearLayout>
 
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="50dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:layout_marginStart="24dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/mplus_rounded"
+            android:textStyle="bold"
+            android:text="Category color:"
+            />
+
+        <LinearLayout
+            android:layout_width="350dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/input_border_light"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/UploadImageBtn"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="10dp"
+                android:src="@drawable/baseline_color_lens_24"/>
+
+            <EditText
+                android:layout_width="290dp"
+                android:layout_height="50dp"
+                android:enabled="false"
+                android:ems="10"
+                android:hint="Add a color"
+                android:background="@null"
+                android:inputType="text"
+                android:fontFamily="@font/mplus_rounded"
+                android:textColor="@color/black"
+                android:textColorHint="@color/gray"
+                android:textSize="16sp" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/uploadColor"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:adjustViewBounds="true"
+                android:layout_marginStart="-60dp"
+                android:scaleType="centerCrop"
+                android:elevation="2dp"
+                android:background="@color/purple"
+                app:shapeAppearanceOverlay="@style/RoundedSquare"
+                />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
 
 
 </LinearLayout>

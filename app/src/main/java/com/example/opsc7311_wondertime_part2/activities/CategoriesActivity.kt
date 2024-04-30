@@ -7,9 +7,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
-import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.Button
@@ -17,8 +15,6 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.content.ContextCompat
-import androidx.core.util.Pair
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.opsc7311_wondertime_part2.R
@@ -26,9 +22,11 @@ import com.example.opsc7311_wondertime_part2.adapters.categoryAdapter
 import com.example.opsc7311_wondertime_part2.databinding.ActivityCategoriesBinding
 import com.example.opsc7311_wondertime_part2.models.CategoriesRepository
 import com.example.opsc7311_wondertime_part2.models.categoriesModel
+import com.github.dhaval2404.colorpicker.MaterialColorPickerDialog
+import com.github.dhaval2404.colorpicker.model.ColorShape
+import com.github.dhaval2404.colorpicker.model.ColorSwatch
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.datepicker.MaterialDatePicker
-import java.text.MessageFormat
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -38,14 +36,12 @@ class CategoriesActivity : AppCompatActivity() {
     val categoriesList = CategoriesRepository.getCategoryList()
     private lateinit var recyclerView: RecyclerView
     private lateinit var categoryAdapter: categoryAdapter
+    private lateinit var drawable : ColorDrawable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding: ActivityCategoriesBinding = ActivityCategoriesBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        val window: Window = this@CategoriesActivity.window
-        window.statusBarColor = ContextCompat.getColor(this@CategoriesActivity, R.color.white)
 
         val bottomNav: BottomNavigationView = findViewById(R.id.bottomNavigationView)
         bottomNav.selectedItemId = R.id.categories
@@ -129,11 +125,29 @@ class CategoriesActivity : AppCompatActivity() {
         // Initialize views after inflating the dialog layout
         val name = dialog.findViewById<EditText>(R.id.categoryNameInput)
         val saveBtn = dialog.findViewById<TextView>(R.id.saveCategory)
+        val colorInput = dialog.findViewById<ImageView>(R.id.uploadColor)
+
+        colorInput.setOnClickListener{
+            MaterialColorPickerDialog
+                .Builder(this)
+                .setTitle("Pick Color")
+                .setColorShape(ColorShape.SQAURE)
+                .setColorSwatch(ColorSwatch._300)
+                .setDefaultColor("#FFFFFF")
+                .setColorListener { color, colorHex ->
+                    drawable = ColorDrawable(color)
+                    colorInput.background = drawable
+                }
+                .show()
+
+        }
 
         saveBtn.setOnClickListener{
             val categoryName = name.text.toString()
+            val color = drawable
+
             if (categoryName.isNotEmpty()) {
-                val newCategory = categoriesModel(categoryName, 0)
+                val newCategory = categoriesModel(categoryName, 0, color)
                 CategoriesRepository.addCategory(newCategory)
                 categoryAdapter.notifyDataSetChanged()
                 dialog.dismiss()

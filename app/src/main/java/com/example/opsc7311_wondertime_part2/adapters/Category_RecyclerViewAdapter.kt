@@ -2,9 +2,11 @@ package com.example.opsc7311_wondertime_part2.adapters
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.opsc7311_wondertime_part2.R
@@ -15,6 +17,7 @@ class categoryAdapter(val c: Context, val categoryList: ArrayList<categoriesMode
     inner class CatViewHolder(val v: View): RecyclerView.ViewHolder(v){
         val name = v.findViewById<TextView>(R.id.Catname)
         val TotalHours = v.findViewById<TextView>(R.id.HoursWorkedText)
+        val color = v.findViewById<LinearLayout>(R.id.categoryColor)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CatViewHolder {
@@ -31,6 +34,8 @@ class categoryAdapter(val c: Context, val categoryList: ArrayList<categoriesMode
         val newCat = categoryList[position]
         holder.name.text = newCat.name
         holder.TotalHours.text = newCat.totalHours.toString()
+
+        holder.color.background = newCat.color
 
         holder.itemView.setOnClickListener {
             val selectedCategory = newCat.name

@@ -4,6 +4,8 @@
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
         <item name="android:fontFamily">@style/CustomFontStyle</item>
+        <item name="android:statusBarColor">@color/backgroundWhite</item>
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 
     <style name="Theme.OPSC7311_WonderTime_Part2" parent="Base.Theme.OPSC7311_WonderTime_Part2" />

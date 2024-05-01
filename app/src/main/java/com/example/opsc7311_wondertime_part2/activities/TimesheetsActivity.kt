@@ -161,7 +161,6 @@ class TimesheetsActivity : AppCompatActivity() {
 
     }
 
-
     private fun showBottomDialog() {
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -262,7 +261,6 @@ class TimesheetsActivity : AppCompatActivity() {
             }
 
         }
-
 
         cancelButton.setOnClickListener { dialog.dismiss() }
         dialog.show()

@@ -38,3 +38,14 @@ object CategoriesRepository {
         return false
     }
 }
+object HomeRepository {
+    private val dailyGoalList = ArrayList<homeModel>()
+
+    fun getDailyGoalList(): ArrayList<homeModel> {
+        return dailyGoalList
+    }
+
+    fun addDailyGoal(dailyGoal: homeModel) {
+        dailyGoalList.add(dailyGoal)
+    }
+}

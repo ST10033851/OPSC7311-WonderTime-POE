@@ -60,22 +60,19 @@ class HomeActivity : AppCompatActivity() {
             itemDate?.time == currentDate
         }.sumOf { it.duration }
 
-        val minimumGoal = homeModelList.firstOrNull()?.minimumGoal ?: 0
-        val maximumGoal = homeModelList.firstOrNull()?.maximumGoal ?: 0
+        val dailyGoals = HomeRepository.getDailyGoalList()
+        if (dailyGoals.isNotEmpty()) {
+            val minimumGoal = dailyGoals.first().minimumGoal
+            val maximumGoal = dailyGoals.first().maximumGoal
 
-        if(minimumGoal !== 0 && maximumGoal !== 0){
+            minTimeDisplay.text = minimumGoal.toString() + "Hours"
+            maxTimeDisplay.text = maximumGoal.toString() + "Hours"
 
             if (totalDurationToday >= minimumGoal) {
-                mincheckImage = findViewById(R.id.minCheckMark)
                 mincheckImage.visibility = View.VISIBLE
-
-                minTimeDisplay.text = minimumGoal.toString()
-                maxTimeDisplay.text = maximumGoal.toString()
-
             }
 
-            if(totalDurationToday >= maximumGoal){
-                maxcheckImage = findViewById(R.id.maxCheckMark)
+            if (totalDurationToday >= maximumGoal) {
                 maxcheckImage.visibility = View.VISIBLE
             }
         }

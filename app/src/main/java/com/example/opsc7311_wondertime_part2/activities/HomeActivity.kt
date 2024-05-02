@@ -1,5 +1,6 @@
 package com.example.opsc7311_wondertime_part2.activities
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
@@ -33,6 +34,7 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var maxcheckImage: ImageView
     private lateinit var TimepickerBtn: TimeRangePicker
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
@@ -65,14 +67,16 @@ class HomeActivity : AppCompatActivity() {
             val minimumGoal = dailyGoals.first().minimumGoal
             val maximumGoal = dailyGoals.first().maximumGoal
 
-            minTimeDisplay.text = minimumGoal.toString() + "Hours"
-            maxTimeDisplay.text = maximumGoal.toString() + "Hours"
+            minTimeDisplay.text = "$minimumGoal Hours"
+            maxTimeDisplay.text = "$maximumGoal Hours"
 
             if (totalDurationToday >= minimumGoal) {
+                mincheckImage = findViewById(R.id.minCheckMark)
                 mincheckImage.visibility = View.VISIBLE
             }
 
             if (totalDurationToday >= maximumGoal) {
+                maxcheckImage = findViewById(R.id.maxCheckMark)
                 maxcheckImage.visibility = View.VISIBLE
             }
         }

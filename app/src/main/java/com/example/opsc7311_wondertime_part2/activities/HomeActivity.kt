@@ -1,34 +1,80 @@
 package com.example.opsc7311_wondertime_part2.activities
 
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
-import android.media.Image
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.opsc7311_wondertime_part2.R
-import com.example.opsc7311_wondertime_part2.fragments.new_timesheet_Fragment
-import com.example.opsc7311_wondertime_part2.models.CategoriesRepository
 import com.example.opsc7311_wondertime_part2.models.HomeRepository
 import com.example.opsc7311_wondertime_part2.models.TimesheetRepository
 import com.example.opsc7311_wondertime_part2.models.homeModel
-import com.example.opsc7311_wondertime_part2.models.timesheetsModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import nl.joery.timerangepicker.TimeRangePicker
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 class HomeActivity : AppCompatActivity() {
 
-    private val homeModelList = mutableListOf<homeModel>()
+    private val homeModelList = HomeRepository.getDailyGoalList()
+    private val timesheetsList = TimesheetRepository.getTimesheetsList()
+    var minGoalTime = 0
+    var maxGoalTime = 0
+    private lateinit var minGoal: TextView
+    private lateinit var maxGoal: TextView
+    private lateinit var mincheckImage: ImageView
+    private lateinit var maxcheckImage: ImageView
+    private lateinit var TimepickerBtn: TimeRangePicker
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
         val bottomNav: BottomNavigationView = findViewById(R.id.bottomNavigationView)
+        val saveDailyGoalBtn = findViewById<Button>(R.id.saveDailyGoal)
+        TimepickerBtn = findViewById(R.id.picker)
+        minGoal= findViewById(R.id.MinimumGoalInput)
+        maxGoal= findViewById(R.id.MaximumGoalInput)
+
+        val currentDate = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.timeInMillis
+
+        var goalDuration: Int = 0
+
+        val totalDurationToday = timesheetsList.filter {
+            val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+            val itemDate = dateFormat.parse(it.date)
+            itemDate?.time == currentDate
+        }.sumOf { it.duration }
+
+        val minimumGoal = homeModelList.firstOrNull()?.minimumGoal ?: 0
+        val maximumGoal = homeModelList.firstOrNull()?.maximumGoal ?: 0
+
+        if(minimumGoal !== 0 && maximumGoal !== 0){
+
+            if (totalDurationToday >= minimumGoal) {
+                mincheckImage = findViewById(R.id.minCheckMark)
+                mincheckImage.visibility = View.VISIBLE
+
+            }
+
+            if(totalDurationToday >= maximumGoal){
+                maxcheckImage = findViewById(R.id.maxCheckMark)
+                maxcheckImage.visibility = View.VISIBLE
+            }
+        }
+
         bottomNav.selectedItemId = R.id.home
 
         bottomNav.setOnItemSelectedListener { item ->
@@ -53,6 +99,25 @@ class HomeActivity : AppCompatActivity() {
             }
         }
 
+        TimepickerBtn.setOnTimeChangeListener(object : TimeRangePicker.OnTimeChangeListener {
+
+            override fun onStartTimeChange(endTime: TimeRangePicker.Time) {
+                val timeString = "${endTime.hour}h:${endTime.minute}m"
+                maxGoal.text = timeString
+                maxGoalTime = endTime.hour
+            }
+
+            override fun onEndTimeChange(startTime: TimeRangePicker.Time) {
+                val timeString = "${startTime.hour}h:${startTime.minute}m"
+                minGoal.text = timeString
+                minGoalTime = startTime.hour
+            }
+
+            override fun onDurationChange(duration: TimeRangePicker.TimeDuration) {
+                goalDuration = maxGoalTime - minGoalTime
+            }
+        })
+
         val logoImageView = findViewById<ImageView>(R.id.logo)
         logoImageView.setOnClickListener{
             showLogoutConfirmationDialog()
@@ -68,7 +133,40 @@ class HomeActivity : AppCompatActivity() {
             handleOtherNavigation()
         }
 
-        saveDailyGoal()
+        saveDailyGoalBtn.setOnClickListener()
+        {
+            val min = minGoal.text.toString()
+            val max = maxGoal.text.toString()
+
+            if(min.isEmpty() || max.isEmpty())
+            {
+                val errorDialog = Dialog(this)
+                errorDialog.setContentView(R.layout.error_dialog)
+                errorDialog.setCancelable(false)
+                val errorMessageTextView = errorDialog.findViewById<TextView>(R.id.ErrorDescription)
+                errorMessageTextView.text = "Please enter all fields"
+                val dismissButton = errorDialog.findViewById<Button>(R.id.ErrorDone)
+                dismissButton.setOnClickListener {
+                    errorDialog.dismiss()
+                }
+                errorDialog.show()
+            }
+            else{
+                val sharedPreferences = getSharedPreferences("DailyGoalPrefs", Context.MODE_PRIVATE)
+                val lastSavedDate = sharedPreferences.getLong("lastSavedDate", 0)
+
+                if (currentDate > lastSavedDate) {
+                    showGoalConfirmationDialog()
+                    Toast.makeText(this, "Daily Goal Saved!", Toast.LENGTH_SHORT).show()
+
+                    sharedPreferences.edit().putLong("lastSavedDate", currentDate).apply()
+                } else {
+                    Toast.makeText(this@HomeActivity, "Daily Goal already saved for today!", Toast.LENGTH_SHORT).show()
+                }
+
+
+            }
+        }
     }
 
     private fun handleCategoriesNavigation(){
@@ -96,63 +194,43 @@ class HomeActivity : AppCompatActivity() {
         }
         alertDialog.show()
     }
+
+    private fun showGoalConfirmationDialog()
+    {
+        val minGoal= findViewById<TextView>(R.id.MinimumGoalInput)
+        val maxGoal= findViewById<TextView>(R.id.MaximumGoalInput)
+        val alertDialog = AlertDialog.Builder(this)
+        alertDialog.setTitle("Save goals")
+        alertDialog.setMessage("Note: You can set your minimum and maximum goals for today. " +
+                "\nAfter saving, you won't be able to enter another goal until tomorrow.")
+        alertDialog.setPositiveButton("Yes")
+        {
+            dialog, _ ->
+                saveDailyGoal()
+                minGoal.text = ""
+                maxGoal.text = ""
+                TimepickerBtn.isEnabled = false
+            dialog.dismiss()
+        }
+        alertDialog.setNegativeButton("No")
+        {
+                dialog, _ ->
+            dialog.dismiss()
+        }
+        alertDialog.show()
+    }
     private fun saveDailyGoal()
     {
-        val TimepickerBtn = findViewById<TimeRangePicker>(R.id.picker)
-        val saveDailyGoalBtn = findViewById<Button>(R.id.saveDailyGoal)
-        val minGoal = findViewById<EditText>(R.id.MinimumGoalInput)
-        val maxGoal = findViewById<EditText>(R.id.MaximumGoalInput)
-        val minTimeDisplay = findViewById<TextView>(R.id.MinTimeDisplay)
-        val maxTimeDisplay = findViewById<TextView>(R.id.MaxTimeDisplay)
-        var goalDuration: Int = 0
+        val minTimeDisplay: TextView = findViewById(R.id.MinTimeDisplay)
+        val maxTimeDisplay: TextView = findViewById(R.id.MaxTimeDisplay)
+        val min = minGoalTime
+        val max = maxGoalTime
 
-        TimepickerBtn.setOnTimeChangeListener(object : TimeRangePicker.OnTimeChangeListener {
-            var minGoalTime = 0
-            var maxGoalTime = 0
+        val newDailyGoal = homeModel(min, max)
+        HomeRepository.addDailyGoal(newDailyGoal)
+        minTimeDisplay.text = minGoal.text
+        maxTimeDisplay.text = maxGoal.text
 
-            override fun onStartTimeChange(endTime: TimeRangePicker.Time) {
-                val timeString = "${endTime.hour}:${endTime.minute}"
-                maxGoal.setText(timeString)
-                maxGoalTime = endTime.hour
-            }
 
-            override fun onEndTimeChange(startTime: TimeRangePicker.Time) {
-                val timeString = "${startTime.hour}:${startTime.minute}"
-                minGoal.setText(timeString)
-                minGoalTime = startTime.hour
-            }
-
-            override fun onDurationChange(duration: TimeRangePicker.TimeDuration) {
-                goalDuration = maxGoalTime - minGoalTime
-            }
-        })
-        saveDailyGoalBtn.setOnClickListener()
-        {
-            val min = minGoal.text.toString()
-            val max = maxGoal.text.toString()
-            val newDailyGoal = homeModel(min, max)
-
-            if(min.isEmpty() || max.isEmpty())
-            {
-                val errorDialog = Dialog(this)
-                errorDialog.setContentView(R.layout.error_dialog)
-                errorDialog.setCancelable(false)
-                val errorMessageTextView = errorDialog.findViewById<TextView>(R.id.ErrorDescription)
-                errorMessageTextView.text = "Please enter all fields"
-                val dismissButton = errorDialog.findViewById<Button>(R.id.ErrorDone)
-                dismissButton.setOnClickListener {
-                    errorDialog.dismiss()
-                }
-                errorDialog.show()
-            }
-            else{
-                HomeRepository.addDailyGoal(newDailyGoal)
-                Toast.makeText(this, "Daily Goal Saved!", Toast.LENGTH_SHORT).show()
-                minTimeDisplay.setText(min)
-                maxTimeDisplay.setText(max)
-                minGoal.setText("")
-                maxGoal.setText("")
-            }
-        }
     }
 }

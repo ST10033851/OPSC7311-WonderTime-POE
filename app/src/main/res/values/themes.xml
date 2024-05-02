@@ -10,6 +10,8 @@
 
     <style name="Theme.OPSC7311_WonderTime_Part2" parent="Base.Theme.OPSC7311_WonderTime_Part2" />
 
+    <style name="DatePickerTheme" parent="Theme.Material3.Light" />
+
     <style name="CustomFontStyle">
         <item name="android:fontFamily">@font/mplus_rounded</item>
     </style>

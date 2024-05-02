@@ -18,4 +18,19 @@
     <string name="create_timesheet">Create Timesheet</string>
     <string name="todo">TODO</string>
     <string name="there_are_no_categories_entered">There are no categories entered</string>
+    <string name="dont_have_an_account">Dont have an account?</string>
+    <string name="register">Register</string>
+    <string name="categories">Categories</string>
+    <string name="filter_by_date">Filter by date:</string>
+    <string name="welcome_back">Welcome back</string>
+    <string name="your_daily_goal">Your daily goal</string>
+    <string name="min">Min</string>
+    <string name="_0_hours">0 Hours</string>
+    <string name="max">Max</string>
+    <string name="minimum_goal">Minimum Goal:</string>
+    <string name="maximum_goal">Maximum goal:</string>
+    <string name="save_daily_goal">Save daily goal</string>
+    <string name="login">Login</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
 </resources>

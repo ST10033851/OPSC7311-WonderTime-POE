@@ -218,7 +218,7 @@
                 android:textColor="@color/black"
                 android:fontFamily="@font/mplus_rounded"
                 android:textStyle="bold"
-                android:text="Date:"
+                android:text="Image:"
                 />
 
             <LinearLayout

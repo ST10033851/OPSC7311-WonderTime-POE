@@ -16,27 +16,29 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_marginTop="40dp"
-            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
             android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            tools:ignore="UseCompoundDrawables">
 
             <ImageView
                 android:id="@+id/imageView2"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:layout_marginRight="10dp"
-                android:src="@drawable/timesheet_icon" />
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/timesheet_icon"
+                android:contentDescription="@string/todo" />
 
             <TextView
                 android:id="@+id/textView"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textSize="25sp"
                 android:textColor="@color/black"
                 android:fontFamily="@font/mplus_rounded"
                 android:textStyle="bold"
-                android:text="Categories" />
+                android:text="@string/categories" />
         </LinearLayout>
 
 
@@ -55,7 +57,7 @@
                 android:textColor="@color/black"
                 android:fontFamily="@font/mplus_rounded"
                 android:textStyle="bold"
-                android:text="Filter by date:"
+                android:text="@string/filter_by_date"
                 />
 
             <LinearLayout
@@ -73,20 +75,22 @@
                     android:layout_height="wrap_content"
                     android:ems="10"
                     android:enabled="false"
-                    android:hint="DD - MM - YYYY"
+                    android:hint="@string/dd_mm_yyyy"
                     android:background="@null"
                     android:inputType="text"
                     android:fontFamily="@font/mplus_rounded"
                     android:padding="18dp"
                     android:textColor="@color/black"
                     android:textColorHint="@color/gray"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:autofillHints="" />
 
                 <ImageView
                     android:layout_width="50dp"
                     android:id="@+id/CategoryRangePicker"
                     android:layout_height="50dp"
-                    android:src="@drawable/calender_icon"/>
+                    android:src="@drawable/calender_icon"
+                    android:contentDescription="@string/todo" />
 
             </LinearLayout>
 
@@ -136,7 +140,8 @@
             android:backgroundTint="@color/white"
             android:src="@drawable/add"
             app:layout_anchor="@id/bottomAppBar"
-            app:maxImageSize="65dp" />
+            app:maxImageSize="65dp"
+            android:contentDescription="@string/todo" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

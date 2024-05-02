@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/backgroundWhite"
     tools:context=".activities.RegisterActivity">
 
     <ImageView
@@ -72,20 +73,6 @@
             android:textColorHint="@color/gray"
             android:textSize="16sp" />
 
-        <EditText
-            android:id="@+id/ConfirmPassword_Input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:background="@drawable/input_border"
-            android:ems="10"
-            android:hint="Confirm Password"
-            android:inputType="textPassword"
-            android:padding="18dp"
-            android:textColor="@color/black"
-            android:textColorHint="@color/gray"
-            android:fontFamily="@font/mplus_rounded"
-            android:textSize="16sp" />
 
         <Button
             android:id="@+id/register_btn"

@@ -34,6 +34,8 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var maxcheckImage: ImageView
     private lateinit var TimepickerBtn: TimeRangePicker
 
+    //Droppers. (2021). TimeRangePicker [GitHub Repository]. Retrieved from https://github.com/Droppers/TimeRangePicker
+
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

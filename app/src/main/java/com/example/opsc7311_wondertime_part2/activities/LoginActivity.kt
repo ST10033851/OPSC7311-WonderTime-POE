@@ -11,6 +11,9 @@ import com.example.opsc7311_wondertime_part2.databinding.ActivityLoginBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 
+//Android Knowledge. (2022, October 27).
+// Login and Signup using Firebase Authentication in Android Studio [Video].
+// YouTube. https://www.youtube.com/watch?v=TStttJRAPhE
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding

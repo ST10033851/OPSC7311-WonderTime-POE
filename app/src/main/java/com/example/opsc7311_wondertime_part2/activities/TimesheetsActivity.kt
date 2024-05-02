@@ -39,6 +39,8 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+
+//Droppers. (2021). TimeRangePicker [GitHub Repository]. Retrieved from https://github.com/Droppers/TimeRangePicker
 class TimesheetsActivity : AppCompatActivity() {
 
     private val timesheetsList = TimesheetRepository.getTimesheetsList()

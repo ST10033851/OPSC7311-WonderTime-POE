@@ -39,6 +39,8 @@ class HomeActivity : AppCompatActivity() {
 
         val bottomNav: BottomNavigationView = findViewById(R.id.bottomNavigationView)
         val saveDailyGoalBtn = findViewById<Button>(R.id.saveDailyGoal)
+        val minTimeDisplay: TextView = findViewById(R.id.MinTimeDisplay)
+        val maxTimeDisplay: TextView = findViewById(R.id.MaxTimeDisplay)
         TimepickerBtn = findViewById(R.id.picker)
         minGoal= findViewById(R.id.MinimumGoalInput)
         maxGoal= findViewById(R.id.MaximumGoalInput)
@@ -66,6 +68,9 @@ class HomeActivity : AppCompatActivity() {
             if (totalDurationToday >= minimumGoal) {
                 mincheckImage = findViewById(R.id.minCheckMark)
                 mincheckImage.visibility = View.VISIBLE
+
+                minTimeDisplay.text = minimumGoal.toString()
+                maxTimeDisplay.text = maximumGoal.toString()
 
             }
 

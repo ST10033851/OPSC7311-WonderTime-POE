@@ -7,10 +7,11 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.opsc7311_wondertime_part2.R
 import com.example.opsc7311_wondertime_part2.models.timesheetsModel
 
-class TimesheetAdapter(val c: Context, val timesheetList: List<timesheetsModel>) : RecyclerView.Adapter<TimesheetAdapter.TimeViewHolder>(){
+class TimesheetAdapter(val c: Context, var timesheetList: List<timesheetsModel>) : RecyclerView.Adapter<TimesheetAdapter.TimeViewHolder>(){
     inner class TimeViewHolder(val v: View): RecyclerView.ViewHolder(v){
         val date = v.findViewById<TextView>(R.id.date)
         val AssignedCategory = v.findViewById<TextView>(R.id.AssignedCategory)
@@ -31,6 +32,11 @@ class TimesheetAdapter(val c: Context, val timesheetList: List<timesheetsModel>)
         return timesheetList.size
     }
 
+    fun submitList(newList: List<timesheetsModel>) {
+        timesheetList = newList
+        notifyDataSetChanged()
+    }
+
     override fun onBindViewHolder(holder: TimeViewHolder, position: Int) {
         val newTimeSheet = timesheetList[position]
         holder.date.text = newTimeSheet.date
@@ -38,7 +44,11 @@ class TimesheetAdapter(val c: Context, val timesheetList: List<timesheetsModel>)
         holder.Description.text = newTimeSheet.description
         holder.startTime.text = newTimeSheet.startTime
         holder.endTime.text = newTimeSheet.endTime
-        holder.Image?.setImageURI(newTimeSheet.imageUri)
+        Glide.with(holder.itemView)
+            .load(newTimeSheet.imageUri)
+            .placeholder(R.drawable.test_image)
+            .error(R.drawable.test_image)
+            .into(holder.Image)
 
     }
 }

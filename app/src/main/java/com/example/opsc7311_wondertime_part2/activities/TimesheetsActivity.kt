@@ -34,6 +34,13 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.database
 import nl.joery.timerangepicker.TimeRangePicker
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -51,19 +58,40 @@ class TimesheetsActivity : AppCompatActivity() {
     private lateinit var imageInput : Uri
     private lateinit var category_name: String
     private lateinit var rangeInput: EditText
+    private lateinit var database: DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_timesheets)
+        database = Firebase.database.reference.child("Timesheets")
 
         val bottomNav: BottomNavigationView = findViewById(R.id.bottomNavigationView)
         val timesheetRangePicker = findViewById<ImageView>(R.id.TimesheetRangePicker)
         rangeInput  = findViewById<EditText>(R.id.timesheetRangeInput)
         plusTimeSheetButton = findViewById(R.id.plusTimeSheet)
         category_name = intent.getStringExtra("categoryName").toString()
-
         val timesheetsFiltered = timesheetsList.filter { it.category.equals(category_name, ignoreCase = true) }
 
+        database.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                timesheetsList.clear()
+                if (dataSnapshot.exists()) {
+                    for (studentsnapshot in dataSnapshot.children) {
+                        val studentModel = studentsnapshot.getValue(timesheetsModel::class.java)
+                        timesheetsList.add(studentModel!!)
+                    }
+                    // Filter the list after fetching the data
+                    val timesheetsFiltered = timesheetsList.filter { it.category.equals(category_name, ignoreCase = true) }
+
+                    // Update the adapter with the filtered list
+                    timesheetAdapter.submitList(timesheetsFiltered)
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Toast.makeText(this@TimesheetsActivity, databaseError.toString(), Toast.LENGTH_SHORT).show()
+            }
+        })
         val resId = R.drawable.test_image
         imageInput = Uri.parse("android.resource://${packageName}/$resId")
 
@@ -94,9 +122,14 @@ class TimesheetsActivity : AppCompatActivity() {
         }
 
         recyclerView = findViewById(R.id.t_recycler)
+
         timesheetAdapter = TimesheetAdapter(this, timesheetsFiltered )
+
         recyclerView.adapter = timesheetAdapter
+
         recyclerView.layoutManager = LinearLayoutManager(this)
+
+        timesheetAdapter.notifyDataSetChanged()
 
         timesheetRangePicker.setOnClickListener{ showRangePicker() }
 
@@ -150,7 +183,7 @@ class TimesheetsActivity : AppCompatActivity() {
                 val startDate = dateFormat.parse(date1)
                 val endDate = dateFormat.parse(date2)
 
-                itemDate != null && itemDate.after(startDate) && itemDate.before(endDate)
+                itemDate != null && !itemDate.before(startDate) && !itemDate.after(endDate)
                         && it.category.equals(category_name, ignoreCase = true)
             }
 
@@ -235,8 +268,10 @@ class TimesheetsActivity : AppCompatActivity() {
             val startTime = startTimeInput.text.toString()
             val endTime = endTimeInput.text.toString()
             val category = CategoryInput
-            val imageResource = imageInput
-            val newTimesheet = timesheetsModel(date, startTime, endTime, description, category, imageResource, Timesheetduration)
+            val imageResource = imageInput.toString()
+            val user = FirebaseAuth.getInstance().currentUser
+            val uid = user!!.uid
+            val newTimesheet = timesheetsModel(uid,date, startTime, endTime, description, category, imageResource, Timesheetduration)
 
             if(date.isEmpty() || description.isEmpty() || startTime.isEmpty() || endTime.isEmpty()){
                 val errorDialog = Dialog(this)
@@ -253,10 +288,27 @@ class TimesheetsActivity : AppCompatActivity() {
                 errorDialog.show()
             }
             else{
-                TimesheetRepository.addTimesheet(newTimesheet)
-                timesheetAdapter.notifyDataSetChanged()
+                val newTimesheetRef = database.push()
+                newTimesheetRef.setValue(newTimesheet)
 
-                CategoriesRepository.calcTotalHours(category_name, timesheetsList)
+                database.addValueEventListener(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        timesheetsList.clear()
+                        if (dataSnapshot.exists()) {
+                            for (studentsnapshot in dataSnapshot.children) {
+                                val studentModel = studentsnapshot.getValue(timesheetsModel::class.java)
+                                timesheetsList.add(studentModel!!)
+                            }
+                            timesheetAdapter.notifyDataSetChanged()
+                        }
+                    }
+
+                    override fun onCancelled(databaseError: DatabaseError) {
+                        Toast.makeText(this@TimesheetsActivity, databaseError.toString(), Toast.LENGTH_SHORT).show()
+                    }
+                })
+
+                TimesheetRepository.updateTotalHours(category_name,Timesheetduration)
 
                 updateAdapter()
                 dialog.dismiss()
@@ -295,6 +347,7 @@ class TimesheetsActivity : AppCompatActivity() {
         timesheetAdapter = TimesheetAdapter(this, timesheetsFiltered )
         recyclerView.adapter = timesheetAdapter
         recyclerView.layoutManager = LinearLayoutManager(this)
+        timesheetAdapter.notifyDataSetChanged()
     }
     private fun handleHomeNavigation(){
         startActivity(Intent(this, HomeActivity::class.java))

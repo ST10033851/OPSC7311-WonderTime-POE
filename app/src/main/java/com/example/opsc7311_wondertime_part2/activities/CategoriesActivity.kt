@@ -5,7 +5,6 @@ import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Gravity
 import android.view.ViewGroup
@@ -15,10 +14,10 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.opsc7311_wondertime_part2.R
-import com.example.opsc7311_wondertime_part2.adapters.TimesheetAdapter
 import com.example.opsc7311_wondertime_part2.adapters.categoryAdapter
 import com.example.opsc7311_wondertime_part2.databinding.ActivityCategoriesBinding
 import com.example.opsc7311_wondertime_part2.models.CategoriesRepository
@@ -30,24 +29,37 @@ import com.github.dhaval2404.colorpicker.model.ColorShape
 import com.github.dhaval2404.colorpicker.model.ColorSwatch
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.database
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+
 
 class CategoriesActivity : AppCompatActivity() {
 
     val categoriesList = CategoriesRepository.getCategoryList()
     private lateinit var recyclerView: RecyclerView
     private lateinit var categoryAdapter: categoryAdapter
-    private lateinit var drawable : ColorDrawable
+    private lateinit var drawable : String
     private lateinit var rangeInput: EditText
+    private lateinit var database: DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding: ActivityCategoriesBinding = ActivityCategoriesBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        val user = FirebaseAuth.getInstance().currentUser!!
+        val userId = user.uid
 
-        drawable = ColorDrawable(Color.parseColor("#6E3FF1"))
+        database = Firebase.database.reference.child("Categories").child(userId)
+        drawable = "#6E3FF1"
         rangeInput  = findViewById(R.id.categoryRangeInput)
         val bottomNav: BottomNavigationView = findViewById(R.id.bottomNavigationView)
         bottomNav.selectedItemId = R.id.categories
@@ -81,6 +93,24 @@ class CategoriesActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         binding.CategoryRangePicker.setOnClickListener{ showRangePicker() }
+
+        database.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                categoriesList.clear()
+                if (dataSnapshot.exists()) {
+                    for (studentsnapshot in dataSnapshot.children) {
+                        val studentModel = studentsnapshot.getValue(categoriesModel::class.java)
+                        categoriesList.add(studentModel!!)
+                    }
+                    categoryAdapter.notifyDataSetChanged()
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Toast.makeText(this@CategoriesActivity, databaseError.toString(), Toast.LENGTH_SHORT).show()
+            }
+        })
+        categoryAdapter.notifyDataSetChanged()
 
         binding.plusCat.setOnClickListener { showBottomDialog() }
 
@@ -133,7 +163,7 @@ class CategoriesActivity : AppCompatActivity() {
                 val startDate = dateFormat.parse(date1)
                 val endDate = dateFormat.parse(date2)
 
-                itemDate != null && itemDate.after(startDate) && itemDate.before(endDate)
+                itemDate != null && !itemDate.after(startDate) && !itemDate.before(endDate)
             }
 
             for (category in categoriesList) {
@@ -178,8 +208,8 @@ class CategoriesActivity : AppCompatActivity() {
                 .setColorSwatch(ColorSwatch._300)
                 .setDefaultColor("#FFFFFF")
                 .setColorListener { color, colorHex ->
-                    drawable = ColorDrawable(color)
-                    colorInput.background = drawable
+                    drawable = colorHex
+                    colorInput.background = ColorDrawable(Color.parseColor(drawable))
                 }
                 .show()
 
@@ -190,8 +220,33 @@ class CategoriesActivity : AppCompatActivity() {
             val color = drawable
 
             if (categoryName.isNotEmpty()) {
+                val user = FirebaseAuth.getInstance().currentUser!!
+                val userId = user.uid
                 val newCategory = categoriesModel(categoryName, 0, color)
                 CategoriesRepository.addCategory(newCategory)
+
+                val database = FirebaseDatabase.getInstance().getReference("Categories").child(userId)
+
+                // Use category name as the key
+                val newCategoryRef = database.child(newCategory.name)
+                newCategoryRef.setValue(newCategory)
+
+                database.addValueEventListener(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        categoriesList.clear()
+                        if (dataSnapshot.exists()) {
+                            for (studentsnapshot in dataSnapshot.children) {
+                                val studentModel = studentsnapshot.getValue(categoriesModel::class.java)
+                                categoriesList.add(studentModel!!)
+                            }
+                            categoryAdapter.notifyDataSetChanged()
+                        }
+                    }
+
+                    override fun onCancelled(databaseError: DatabaseError) {
+                        Toast.makeText(this@CategoriesActivity, databaseError.toString(), Toast.LENGTH_SHORT).show()
+                    }
+                })
                 categoryAdapter.notifyDataSetChanged()
                 dialog.dismiss()
             } else {

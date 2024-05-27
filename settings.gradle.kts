@@ -15,6 +15,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "OPSC7311_WonderTime_Part2"
+rootProject.name = "OPSC7311_WonderTime_POE"
 include(":app")
  

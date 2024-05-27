@@ -3,6 +3,7 @@ package com.example.opsc7311_wondertime_part2.adapters
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,7 +37,9 @@ class categoryAdapter(val c: Context, private val categoryList: ArrayList<catego
         holder.name.text = newCat.name
         holder.TotalHours.text = newCat.totalHours.toString()
 
-        holder.color.background = newCat.color
+        val colorDrawable = ColorDrawable(Color.parseColor(newCat.color))
+
+        holder.color.background = colorDrawable
 
         holder.itemView.setOnClickListener {
             val selectedCategory = newCat.name

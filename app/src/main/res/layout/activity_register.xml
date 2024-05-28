@@ -43,35 +43,59 @@
             android:textStyle="bold"
             android:textSize="25sp" />
 
-        <EditText
-            android:id="@+id/emailAdrdessInput"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/emailContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:background="@drawable/input_border"
-            android:ems="10"
-            android:hint="Email"
-            android:inputType="textEmailAddress"
-            android:fontFamily="@font/mplus_rounded"
-            android:padding="18dp"
-            android:textColor="@color/black"
-            android:textColorHint="@color/gray"
-            android:textSize="16sp" />
+            app:helperText="Required"
+            app:helperTextTextColor="@color/red_600"
+            app:counterMaxLength="15"
+            app:counterEnabled="true"
+            app:boxBackgroundMode="none">
 
-        <EditText
-            android:id="@+id/password_Input"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/emailAdrdessInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/input_border"
+                android:ems="10"
+                android:hint="Email"
+                android:inputType="text"
+                android:fontFamily="@font/mplus_rounded"
+                android:padding="18dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/gray"
+                android:textSize="16sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/passwordContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:background="@drawable/input_border"
-            android:ems="10"
-            android:hint="Password"
-            android:inputType="textPassword"
-            android:fontFamily="@font/mplus_rounded"
-            android:padding="18dp"
-            android:textColor="@color/black"
-            android:textColorHint="@color/gray"
-            android:textSize="16sp" />
+            android:layout_marginTop="20dp"
+            app:helperText="Required"
+            app:helperTextTextColor="@color/red_600"
+            app:counterMaxLength="15"
+            app:counterEnabled="true"
+            app:passwordToggleEnabled="true"
+            app:boxBackgroundMode="none">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/password_Input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/input_border"
+                android:ems="10"
+                android:hint="Password"
+                android:inputType="textPassword"
+                android:fontFamily="@font/mplus_rounded"
+                android:padding="18dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/gray"
+                android:textSize="16sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
 
 
         <Button

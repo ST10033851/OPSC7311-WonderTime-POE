@@ -3,6 +3,7 @@ package com.example.opsc7311_wondertime_part2.activities
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.ProgressBar
 import com.example.opsc7311_wondertime_part2.R
 import java.util.Timer
@@ -30,7 +31,7 @@ class MainActivity : AppCompatActivity() {
                 if(counter == 100){
                     t.cancel()
 
-                    val intent = Intent(this@MainActivity, HomeActivity::class.java)
+                    val intent = Intent(this@MainActivity, LoginActivity::class.java)
                     startActivity(intent)
                 }
             }

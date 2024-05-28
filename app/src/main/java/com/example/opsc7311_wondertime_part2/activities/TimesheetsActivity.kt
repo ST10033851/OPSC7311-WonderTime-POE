@@ -1,6 +1,7 @@
 package com.example.opsc7311_wondertime_part2.activities
 
 import android.Manifest
+import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.Dialog
 import android.content.Intent
@@ -11,6 +12,7 @@ import android.icu.util.Calendar
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.ViewGroup
@@ -23,6 +25,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.opsc7311_wondertime_part2.R
@@ -42,10 +45,10 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
 import nl.joery.timerangepicker.TimeRangePicker
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-
 
 //Droppers. (2021). TimeRangePicker [GitHub Repository]. Retrieved from https://github.com/Droppers/TimeRangePicker
 class TimesheetsActivity : AppCompatActivity() {
@@ -53,9 +56,11 @@ class TimesheetsActivity : AppCompatActivity() {
     private val timesheetsList = TimesheetRepository.getTimesheetsList()
     private lateinit var timesheetAdapter: TimesheetAdapter
     private lateinit var recyclerView: RecyclerView
+    private val CAMERA_PERMISSION_REQUEST_CODE = 1001
     private lateinit var plusTimeSheetButton: FloatingActionButton
     private lateinit var imageView: ImageView
     private lateinit var imageInput : Uri
+    private lateinit var photoUri: Uri
     private lateinit var category_name: String
     private lateinit var rangeInput: EditText
     private lateinit var database: DatabaseReference
@@ -64,6 +69,7 @@ class TimesheetsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_timesheets)
         database = Firebase.database.reference.child("Timesheets")
+        requestCameraPermission()
 
         val bottomNav: BottomNavigationView = findViewById(R.id.bottomNavigationView)
         val timesheetRangePicker = findViewById<ImageView>(R.id.TimesheetRangePicker)
@@ -255,10 +261,21 @@ class TimesheetsActivity : AppCompatActivity() {
             DatePickerDialog(this,datePicker,myCalender.get(Calendar.YEAR), myCalender.get(Calendar.MONTH),
                 myCalender.get(Calendar.DAY_OF_MONTH)).show()
         }
-
         uploadImageBtn.setOnClickListener {
             imageView = dialog.findViewById(R.id.UploadImage)
-            imagePickerLauncher.launch("image/*")
+            val options = arrayOf("Choose from Gallery", "Take Photo")
+            AlertDialog.Builder(this)
+                .setTitle("Select Image")
+                .setItems(options) { _, which ->
+                    when (which) {
+                        0 -> imagePickerLauncher.launch("image/*")
+                        1 -> {
+                            photoUri = createImageUri() ?: return@setItems
+                            cameraLauncher.launch(photoUri)
+                        }
+                    }
+                }
+                .show()
 
         }
 
@@ -338,6 +355,49 @@ class TimesheetsActivity : AppCompatActivity() {
 
         }
     }
+
+    private val cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+        if (success) {
+            imageView.setImageURI(photoUri)
+            imageInput = photoUri
+        }
+    }
+
+    private fun requestCameraPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), CAMERA_PERMISSION_REQUEST_CODE)
+        } else {
+            openCamera()
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                openCamera()
+            } else {
+                // Permission denied, handle accordingly
+                Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun openCamera() {
+        // Your code to launch the camera goes here
+        photoUri = createImageUri() ?: return
+        cameraLauncher.launch(photoUri)
+    }
+
+    fun createImageUri(): Uri? {
+        val image = File(applicationContext.filesDir, "camera_image_${System.currentTimeMillis()}.jpg")
+        return FileProvider.getUriForFile(
+            applicationContext,
+            "${applicationContext.packageName}.provider",
+            image
+        )
+    }
+
 
     private fun updateAdapter(){
         val timesheetsList = TimesheetRepository.getTimesheetsList()

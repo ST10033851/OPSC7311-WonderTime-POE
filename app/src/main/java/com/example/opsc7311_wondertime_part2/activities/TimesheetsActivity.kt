@@ -44,11 +44,14 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import nl.joery.timerangepicker.TimeRangePicker
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.UUID
 
 //Droppers. (2021). TimeRangePicker [GitHub Repository]. Retrieved from https://github.com/Droppers/TimeRangePicker
 class TimesheetsActivity : AppCompatActivity() {
@@ -64,16 +67,18 @@ class TimesheetsActivity : AppCompatActivity() {
     private lateinit var category_name: String
     private lateinit var rangeInput: EditText
     private lateinit var database: DatabaseReference
+    private lateinit var storageRef: StorageReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_timesheets)
         database = Firebase.database.reference.child("Timesheets")
+        storageRef = FirebaseStorage.getInstance().getReference("Images")
         requestCameraPermission()
 
         val bottomNav: BottomNavigationView = findViewById(R.id.bottomNavigationView)
         val timesheetRangePicker = findViewById<ImageView>(R.id.TimesheetRangePicker)
-        rangeInput  = findViewById<EditText>(R.id.timesheetRangeInput)
+        rangeInput  = findViewById(R.id.timesheetRangeInput)
         plusTimeSheetButton = findViewById(R.id.plusTimeSheet)
         category_name = intent.getStringExtra("categoryName").toString()
         val timesheetsFiltered = timesheetsList.filter { it.category.equals(category_name, ignoreCase = true) }
@@ -224,8 +229,6 @@ class TimesheetsActivity : AppCompatActivity() {
         val sdf = SimpleDateFormat(myFormat, Locale.UK)
         val myCalender = Calendar.getInstance()
 
-
-
         val datePicker = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
             myCalender.set(Calendar.YEAR, year)
             myCalender.set(Calendar.MONTH,month)
@@ -279,18 +282,17 @@ class TimesheetsActivity : AppCompatActivity() {
 
         }
 
-        saveBtn.setOnClickListener{
+        saveBtn.setOnClickListener {
             val date = dateInput.text.toString()
             val description = descriptionInput.text.toString()
             val startTime = startTimeInput.text.toString()
             val endTime = endTimeInput.text.toString()
             val category = CategoryInput
-            val imageResource = imageInput.toString()
+            val imageUri = imageInput  // Assuming this is the Uri of the selected image
             val user = FirebaseAuth.getInstance().currentUser
             val uid = user!!.uid
-            val newTimesheet = timesheetsModel(uid,date, startTime, endTime, description, category, imageResource, Timesheetduration)
 
-            if(date.isEmpty() || description.isEmpty() || startTime.isEmpty() || endTime.isEmpty()){
+            if (date.isEmpty() || description.isEmpty() || startTime.isEmpty() || endTime.isEmpty()) {
                 val errorDialog = Dialog(this)
                 errorDialog.setContentView(R.layout.error_dialog)
                 errorDialog.setCancelable(false)
@@ -303,35 +305,36 @@ class TimesheetsActivity : AppCompatActivity() {
                 }
 
                 errorDialog.show()
-            }
-            else{
-                val newTimesheetRef = database.push()
-                newTimesheetRef.setValue(newTimesheet)
+            } else {
+                uploadImageToFirebase(imageUri) { downloadUrl ->
+                    val newTimesheet = timesheetsModel(uid, date, startTime, endTime, description, category, downloadUrl, Timesheetduration)
+                    val newTimesheetRef = database.push()
+                    newTimesheetRef.setValue(newTimesheet)
 
-                database.addValueEventListener(object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        timesheetsList.clear()
-                        if (dataSnapshot.exists()) {
-                            for (studentsnapshot in dataSnapshot.children) {
-                                val studentModel = studentsnapshot.getValue(timesheetsModel::class.java)
-                                timesheetsList.add(studentModel!!)
+                    database.addValueEventListener(object : ValueEventListener {
+                        override fun onDataChange(dataSnapshot: DataSnapshot) {
+                            timesheetsList.clear()
+                            if (dataSnapshot.exists()) {
+                                for (studentsnapshot in dataSnapshot.children) {
+                                    val studentModel = studentsnapshot.getValue(timesheetsModel::class.java)
+                                    timesheetsList.add(studentModel!!)
+                                }
+                                timesheetAdapter.notifyDataSetChanged()
                             }
-                            timesheetAdapter.notifyDataSetChanged()
                         }
-                    }
 
-                    override fun onCancelled(databaseError: DatabaseError) {
-                        Toast.makeText(this@TimesheetsActivity, databaseError.toString(), Toast.LENGTH_SHORT).show()
-                    }
-                })
+                        override fun onCancelled(databaseError: DatabaseError) {
+                            Toast.makeText(this@TimesheetsActivity, databaseError.toString(), Toast.LENGTH_SHORT).show()
+                        }
+                    })
 
-                TimesheetRepository.updateTotalHours(category_name,Timesheetduration)
-
-                updateAdapter()
-                dialog.dismiss()
+                    TimesheetRepository.updateTotalHours(category_name, Timesheetduration)
+                    updateAdapter()
+                    dialog.dismiss()
+                }
             }
-
         }
+
 
         cancelButton.setOnClickListener { dialog.dismiss() }
         dialog.show()
@@ -343,6 +346,21 @@ class TimesheetsActivity : AppCompatActivity() {
         dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
         dialog.window!!.setGravity(Gravity.BOTTOM)
     }
+
+    private fun uploadImageToFirebase(uri: Uri, onSuccess: (String) -> Unit) {
+        val storageRef = FirebaseStorage.getInstance().reference
+        val imagesRef = storageRef.child("images/${UUID.randomUUID()}.jpg")
+
+        val uploadTask = imagesRef.putFile(uri)
+        uploadTask.addOnSuccessListener { taskSnapshot ->
+            imagesRef.downloadUrl.addOnSuccessListener { downloadUrl ->
+                onSuccess(downloadUrl.toString())
+            }
+        }.addOnFailureListener { exception ->
+            Toast.makeText(this, "Failed to upload image: ${exception.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
 
     private val imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
 
@@ -366,8 +384,6 @@ class TimesheetsActivity : AppCompatActivity() {
     private fun requestCameraPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), CAMERA_PERMISSION_REQUEST_CODE)
-        } else {
-            openCamera()
         }
     }
 
@@ -375,18 +391,11 @@ class TimesheetsActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                openCamera()
             } else {
                 // Permission denied, handle accordingly
                 Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show()
             }
         }
-    }
-
-    private fun openCamera() {
-        // Your code to launch the camera goes here
-        photoUri = createImageUri() ?: return
-        cameraLauncher.launch(photoUri)
     }
 
     fun createImageUri(): Uri? {
@@ -397,7 +406,6 @@ class TimesheetsActivity : AppCompatActivity() {
             image
         )
     }
-
 
     private fun updateAdapter(){
         val timesheetsList = TimesheetRepository.getTimesheetsList()

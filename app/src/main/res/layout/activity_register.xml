@@ -50,8 +50,6 @@
             android:layout_marginTop="20dp"
             app:helperText="Required"
             app:helperTextTextColor="@color/red_600"
-            app:counterMaxLength="15"
-            app:counterEnabled="true"
             app:boxBackgroundMode="none">
 
             <com.google.android.material.textfield.TextInputEditText

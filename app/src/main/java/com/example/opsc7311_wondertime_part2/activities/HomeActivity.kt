@@ -125,12 +125,6 @@ class HomeActivity : AppCompatActivity() {
                 goalDuration = maxGoalTime - minGoalTime
             }
         })
-
-        val logoImageView = findViewById<ImageView>(R.id.logo)
-        logoImageView.setOnClickListener{
-            showLogoutConfirmationDialog()
-        }
-
         val themeSelectorImageView = findViewById<ImageView>(R.id.themeSelecter)
         themeSelectorImageView.setOnClickListener{
             handleOtherNavigation()
@@ -182,25 +176,6 @@ class HomeActivity : AppCompatActivity() {
     }
     private fun handleOtherNavigation(){
         Toast.makeText(this, "Coming soon!", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun showLogoutConfirmationDialog()
-    {
-        val alertDialog = AlertDialog.Builder(this)
-        alertDialog.setTitle("Logout")
-        alertDialog.setMessage("Are you sure you want to logout?")
-        alertDialog.setPositiveButton("Yes")
-        {
-            dialog, _ ->
-            startActivity(Intent(this, LoginActivity::class.java))
-            dialog.dismiss()
-        }
-        alertDialog.setNegativeButton("No")
-        {
-            dialog, _ ->
-            dialog.dismiss()
-        }
-        alertDialog.show()
     }
 
     private fun showGoalConfirmationDialog()

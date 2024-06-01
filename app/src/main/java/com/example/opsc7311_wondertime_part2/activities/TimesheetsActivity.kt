@@ -119,12 +119,12 @@ class TimesheetsActivity : AppCompatActivity() {
                 }
 
                 R.id.graph -> {
-                    handleOtherNavigation()
+                    handleGraphNavigation()
                     true
                 }
 
                 R.id.profile -> {
-                    handleOtherNavigation()
+                    handleProfileNavigation()
                     true
                 }
 
@@ -288,7 +288,7 @@ class TimesheetsActivity : AppCompatActivity() {
             val startTime = startTimeInput.text.toString()
             val endTime = endTimeInput.text.toString()
             val category = CategoryInput
-            val imageUri = imageInput  // Assuming this is the Uri of the selected image
+            val imageUri = imageInput
             val user = FirebaseAuth.getInstance().currentUser
             val uid = user!!.uid
 
@@ -363,7 +363,6 @@ class TimesheetsActivity : AppCompatActivity() {
 
 
     private val imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-
         if (uri != null) {
             imageView.setImageURI(uri)
             imageInput = uri
@@ -425,5 +424,12 @@ class TimesheetsActivity : AppCompatActivity() {
     }
     private fun handleOtherNavigation(){
         Toast.makeText(this, "Coming soon!", Toast.LENGTH_SHORT).show()
+    }
+    private fun handleProfileNavigation() {
+        startActivity(Intent(this, ProfileActivity::class.java))
+    }
+
+    private fun handleGraphNavigation() {
+        startActivity(Intent(this, StatisticsActivity::class.java))
     }
 }

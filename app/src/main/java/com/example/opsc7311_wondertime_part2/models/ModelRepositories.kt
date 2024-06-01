@@ -1,10 +1,6 @@
 package com.example.opsc7311_wondertime_part2.models
-import android.util.Log
-import android.widget.Toast
-import com.example.opsc7311_wondertime_part2.activities.TimesheetsActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import java.util.Date
 
 object TimesheetRepository {
     private val timesheetsList = ArrayList<timesheetsModel>()
@@ -54,25 +50,6 @@ object TimesheetRepository {
         }
     }
 
-    private val database = FirebaseDatabase.getInstance().getReference("Timesheets")
-
-    fun getAllTimesheets(callback: (List<timesheetsModel>) -> Unit) {
-        database.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val timesheetsList = mutableListOf<timesheetsModel>()
-                for (snapshot in dataSnapshot.children) {
-                    val timesheet = snapshot.getValue(timesheetsModel::class.java)
-                    timesheet?.let { timesheetsList.add(it) }
-                }
-                callback(timesheetsList)
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-                // Handle database error
-                callback(emptyList()) // Or handle the error as needed
-            }
-        })
-    }
 
 
 }
@@ -102,17 +79,15 @@ object CategoriesRepository {
         return false
     }
 
-
-
 }
 object HomeRepository {
-    private val dailyGoalList = ArrayList<homeModel>()
+    private val dailyGoalList = ArrayList<HomeModel>()
 
-    fun getDailyGoalList(): ArrayList<homeModel> {
+    fun getDailyGoalList() :ArrayList<HomeModel> {
         return dailyGoalList
     }
 
-    fun addDailyGoal(dailyGoal: homeModel) {
+    fun addDailyGoal(dailyGoal: HomeModel) {
         dailyGoalList.add(dailyGoal)
     }
 }

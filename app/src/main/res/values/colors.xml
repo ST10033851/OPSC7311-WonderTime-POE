@@ -20,9 +20,15 @@
     <color name="navPurple">#8570FA</color>
     <color name="backgroundWhite">#E3E7F4</color>
     <color name="transparent">#00FFFFFF</color>
+    <color name="green500">#27CCB0</color>
+    <color name="orange">#FF7551</color>
+    <color name="gray400WithOpacity14">#12707070</color>
+    <color name="gray400WithOpacity5">#05707070</color>
+    <color name="linkWithoutButton">#ADB6E1</color>
 
     <style name="DialogAnimation">
         <item name="android:windowEnterAnimation">@anim/slide_in_bottom</item>
         <item name="android:windowExitAnimation">@anim/slide_out_bottom</item>
     </style>
+
 </resources>

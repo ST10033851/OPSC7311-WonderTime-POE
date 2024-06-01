@@ -74,12 +74,12 @@ class CategoriesActivity : AppCompatActivity() {
                 }
 
                 R.id.graph -> {
-                    handleOtherNavigation()
+                    handleGraphNavigation()
                     true
                 }
 
                 R.id.profile -> {
-                    handleOtherNavigation()
+                    handleProfileNavigation()
                     true
                 }
 
@@ -272,5 +272,13 @@ class CategoriesActivity : AppCompatActivity() {
     }
     private fun handleOtherNavigation(){
         Toast.makeText(this, "Coming soon!", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun handleProfileNavigation() {
+        startActivity(Intent(this, ProfileActivity::class.java))
+    }
+
+    private fun handleGraphNavigation() {
+        startActivity(Intent(this, StatisticsActivity::class.java))
     }
 }

@@ -15,16 +15,22 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.opsc7311_wondertime_part2.R
 import com.example.opsc7311_wondertime_part2.models.HomeRepository
 import com.example.opsc7311_wondertime_part2.models.TimesheetRepository
-import com.example.opsc7311_wondertime_part2.models.homeModel
+import com.example.opsc7311_wondertime_part2.models.HomeModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.database
 import nl.joery.timerangepicker.TimeRangePicker
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 
 class HomeActivity : AppCompatActivity() {
-
-    private val homeModelList = HomeRepository.getDailyGoalList()
     private val timesheetsList = TimesheetRepository.getTimesheetsList()
     var minGoalTime = 0
     var maxGoalTime = 0
@@ -33,13 +39,16 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var mincheckImage: ImageView
     private lateinit var maxcheckImage: ImageView
     private lateinit var TimepickerBtn: TimeRangePicker
-
+    private lateinit var database: DatabaseReference
     //Droppers. (2021). TimeRangePicker [GitHub Repository]. Retrieved from https://github.com/Droppers/TimeRangePicker
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
+        val user = FirebaseAuth.getInstance().currentUser!!
+        val userId = user.uid
+        database = Firebase.database.reference.child("DailyHours").child(userId)
 
         val bottomNav: BottomNavigationView = findViewById(R.id.bottomNavigationView)
         val saveDailyGoalBtn = findViewById<Button>(R.id.saveDailyGoal)
@@ -48,6 +57,9 @@ class HomeActivity : AppCompatActivity() {
         TimepickerBtn = findViewById(R.id.picker)
         minGoal= findViewById(R.id.MinimumGoalInput)
         maxGoal= findViewById(R.id.MaximumGoalInput)
+
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val todayDate = dateFormat.format(Date())
 
         val currentDate = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, 0)
@@ -59,29 +71,45 @@ class HomeActivity : AppCompatActivity() {
         var goalDuration: Int = 0
 
         val totalDurationToday = timesheetsList.filter {
-            val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             val itemDate = dateFormat.parse(it.date)
             itemDate?.time == currentDate
         }.sumOf { it.duration }
 
-        val dailyGoals = HomeRepository.getDailyGoalList()
-        if (dailyGoals.isNotEmpty()) {
-            val minimumGoal = dailyGoals.first().minimumGoal
-            val maximumGoal = dailyGoals.first().maximumGoal
+        database.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val dailyGoals = ArrayList<HomeModel>()
 
-            minTimeDisplay.text = "$minimumGoal Hours"
-            maxTimeDisplay.text = "$maximumGoal Hours"
+                for (snapshot in dataSnapshot.children) {
+                    val goal = snapshot.getValue(HomeModel::class.java)
+                    if (goal?.date == todayDate) {
+                        goal?.let { dailyGoals.add(it) }
+                    }
+                }
 
-            if (totalDurationToday >= minimumGoal) {
-                mincheckImage = findViewById(R.id.minCheckMark)
-                mincheckImage.visibility = View.VISIBLE
+                if (dailyGoals.isNotEmpty()) {
+                    val minimumGoal = dailyGoals.first().minimumGoal
+                    val maximumGoal = dailyGoals.first().maximumGoal
+
+                    minTimeDisplay.text = "$minimumGoal Hours"
+                    maxTimeDisplay.text = "$maximumGoal Hours"
+
+                    if (totalDurationToday >= minimumGoal) {
+                        mincheckImage = findViewById(R.id.minCheckMark)
+                        mincheckImage.visibility = View.VISIBLE
+                    }
+
+                    if (totalDurationToday >= maximumGoal) {
+                        maxcheckImage = findViewById(R.id.maxCheckMark)
+                        maxcheckImage.visibility = View.VISIBLE
+                    }
+                }
             }
 
-            if (totalDurationToday >= maximumGoal) {
-                maxcheckImage = findViewById(R.id.maxCheckMark)
-                maxcheckImage.visibility = View.VISIBLE
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle database error
             }
-        }
+        })
 
         bottomNav.selectedItemId = R.id.home
 
@@ -94,12 +122,12 @@ class HomeActivity : AppCompatActivity() {
                     true
                 }
                 R.id.graph -> {
-                    handleOtherNavigation()
+                    handleGraphNavigation()
                     true
                 }
 
                 R.id.profile -> {
-                    handleOtherNavigation()
+                    handleProfileNavigation()
                     true
                 }
 
@@ -157,18 +185,24 @@ class HomeActivity : AppCompatActivity() {
                 val sharedPreferences = getSharedPreferences("DailyGoalPrefs", Context.MODE_PRIVATE)
                 val lastSavedDate = sharedPreferences.getLong("lastSavedDate", 0)
 
-                if (currentDate > lastSavedDate) {
+                if (currentDate == lastSavedDate) {
                     showGoalConfirmationDialog()
-                    Toast.makeText(this, "Daily Goal Saved!", Toast.LENGTH_SHORT).show()
 
                     sharedPreferences.edit().putLong("lastSavedDate", currentDate).apply()
                 } else {
                     Toast.makeText(this@HomeActivity, "Daily Goal already saved for today!", Toast.LENGTH_SHORT).show()
                 }
 
-
             }
         }
+    }
+
+    private fun handleProfileNavigation() {
+        startActivity(Intent(this, ProfileActivity::class.java))
+    }
+
+    private fun handleGraphNavigation() {
+        startActivity(Intent(this, StatisticsActivity::class.java))
     }
 
     private fun handleCategoriesNavigation(){
@@ -209,8 +243,16 @@ class HomeActivity : AppCompatActivity() {
         val min = minGoalTime
         val max = maxGoalTime
 
-        val newDailyGoal = homeModel(min, max)
+        val currentDate = Date()
+        val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val formattedDate = formatter.format(currentDate)
+
+        val newDailyGoal = HomeModel(min, max, formattedDate)
         HomeRepository.addDailyGoal(newDailyGoal)
+
+        val newCategoryRef = database.push()
+        newCategoryRef.setValue(newDailyGoal)
+
         minTimeDisplay.text = minGoal.text
         maxTimeDisplay.text = maxGoal.text
 

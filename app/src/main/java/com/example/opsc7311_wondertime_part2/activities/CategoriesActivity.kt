@@ -6,7 +6,10 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.Gravity
+import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.Button
@@ -58,6 +61,8 @@ class CategoriesActivity : AppCompatActivity() {
         val user = FirebaseAuth.getInstance().currentUser!!
         val userId = user.uid
 
+        binding.shimmerViewContainer.startShimmer()
+
         database = Firebase.database.reference.child("Categories").child(userId)
         drawable = "#6E3FF1"
         rangeInput  = findViewById(R.id.categoryRangeInput)
@@ -86,31 +91,36 @@ class CategoriesActivity : AppCompatActivity() {
                 else -> false
             }
         }
+        Handler(Looper.getMainLooper()).postDelayed({
+            recyclerView = findViewById(R.id.c_recycler)
+            categoryAdapter = categoryAdapter(this, categoriesList)
+            recyclerView.adapter = categoryAdapter
+            recyclerView.layoutManager = LinearLayoutManager(this)
 
-        recyclerView = findViewById(R.id.c_recycler)
-        categoryAdapter = categoryAdapter(this, categoriesList)
-        recyclerView.adapter = categoryAdapter
-        recyclerView.layoutManager = LinearLayoutManager(this)
+            binding.CategoryRangePicker.setOnClickListener{ showRangePicker() }
 
-        binding.CategoryRangePicker.setOnClickListener{ showRangePicker() }
-
-        database.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                categoriesList.clear()
-                if (dataSnapshot.exists()) {
-                    for (studentsnapshot in dataSnapshot.children) {
-                        val studentModel = studentsnapshot.getValue(categoriesModel::class.java)
-                        categoriesList.add(studentModel!!)
+            database.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    categoriesList.clear()
+                    if (dataSnapshot.exists()) {
+                        for (studentsnapshot in dataSnapshot.children) {
+                            val studentModel = studentsnapshot.getValue(categoriesModel::class.java)
+                            categoriesList.add(studentModel!!)
+                        }
+                        categoryAdapter.notifyDataSetChanged()
                     }
-                    categoryAdapter.notifyDataSetChanged()
                 }
-            }
 
-            override fun onCancelled(databaseError: DatabaseError) {
-                Toast.makeText(this@CategoriesActivity, databaseError.toString(), Toast.LENGTH_SHORT).show()
-            }
-        })
-        categoryAdapter.notifyDataSetChanged()
+                override fun onCancelled(databaseError: DatabaseError) {
+                    Toast.makeText(this@CategoriesActivity, databaseError.toString(), Toast.LENGTH_SHORT).show()
+                }
+            })
+            categoryAdapter.notifyDataSetChanged()
+
+            binding.shimmerViewContainer.stopShimmer()
+            binding.shimmerViewContainer.visibility = View.GONE
+            recyclerView.visibility = View.VISIBLE
+        }, 5000)
 
         binding.plusCat.setOnClickListener { showBottomDialog() }
 

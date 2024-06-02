@@ -185,7 +185,7 @@ class HomeActivity : AppCompatActivity() {
                 val sharedPreferences = getSharedPreferences("DailyGoalPrefs", Context.MODE_PRIVATE)
                 val lastSavedDate = sharedPreferences.getLong("lastSavedDate", 0)
 
-                if (currentDate == lastSavedDate) {
+                if (currentDate > lastSavedDate) {
                     showGoalConfirmationDialog()
 
                     sharedPreferences.edit().putLong("lastSavedDate", currentDate).apply()

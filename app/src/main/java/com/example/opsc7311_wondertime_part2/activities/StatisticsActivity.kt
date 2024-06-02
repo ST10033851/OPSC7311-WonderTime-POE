@@ -1,16 +1,10 @@
 package com.example.opsc7311_wondertime_part2.activities
 
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.anychart.data.Set
-import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.anychart.AnyChart
 import com.anychart.AnyChartView
 import com.anychart.chart.common.dataentry.DataEntry
@@ -95,26 +89,30 @@ class StatisticsActivity : AppCompatActivity() {
                         dailyGoal?.let {
                             val day = dailyGoal.date
                             val minGoal = dailyGoal.minimumGoal
+                            val maxGoal = dailyGoal.maximumGoal
                             val actualHours = 10
 
-                            data.add(CustomDataEntry(day, minGoal, actualHours))
+                            data.add(CustomDataEntry(day,  actualHours, minGoal, maxGoal))
                         }
                     }
                     val set: Set = Set.instantiate()
                     set.data(data)
                     val barData: Mapping = set.mapAs("{ x: 'x', value: 'value' }")
                     val jumpLineData: Mapping = set.mapAs("{ x: 'x', value: 'jumpLine' }")
+                    val MaxjumpLineData: Mapping = set.mapAs("{ x: 'x', value: 'maxGoal' }")
 
                     val bar: Bar = vertical.bar(barData)
                     bar.labels().format("{%Value} hrs")
                     bar.fill("#7B61FF")
-                    bar.height("30%")
                     bar.stroke("7B61FF")
 
                     val jumpLine: JumpLine = vertical.jumpLine(jumpLineData)
                     jumpLine.stroke("2 #60727B")
                     jumpLine.labels().enabled(false)
-                    jumpLine.height("30%")
+
+                    val MaxjumpLineL: JumpLine = vertical.jumpLine(MaxjumpLineData)
+                    MaxjumpLineL.stroke("2 #60727B")
+                    MaxjumpLineL.labels().enabled(false)
 
                     vertical.yScale().minimum(0.0)
 
@@ -126,6 +124,7 @@ class StatisticsActivity : AppCompatActivity() {
                         .unionFormat(
                             "function() {\n" +
                                     "      return 'Min: ' + this.points[1].value + ' hrs' +\n" +
+                                    "       '\\n' + 'Max: ' + this.points[2].value + ' hrs' +\n" +
                                     "        '\\n' + 'Actual: ' + this.points[0].value + ' hrs';\n" +
                                     "    }"
                         )
@@ -151,7 +150,7 @@ class StatisticsActivity : AppCompatActivity() {
     }
 
 
-    private class CustomDataEntry(x: String, value: Number, jumpLine: Number) : ValueDataEntry(x, value) {
+    private class CustomDataEntry(x: String, value: Number, jumpLine: Number, maxGoal: Number) : ValueDataEntry(x, value) {
         init {
             setValue("jumpLine", jumpLine)
         }

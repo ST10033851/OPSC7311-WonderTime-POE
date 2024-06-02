@@ -15,4 +15,10 @@
     <style name="CustomFontStyle">
         <item name="android:fontFamily">@font/mplus_rounded</item>
     </style>
+  <!-- Base application theme. -->
+    <style name="Base.Base.Theme.OPSC7311_WonderTime_Part2"
+        parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your dark theme here. -->
+        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+    </style>
 </resources>

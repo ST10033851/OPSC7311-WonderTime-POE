@@ -12,9 +12,12 @@ import android.icu.util.Calendar
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.provider.MediaStore
 import android.view.Gravity
 import android.view.MotionEvent
+import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.Button
@@ -30,6 +33,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.opsc7311_wondertime_part2.R
 import com.example.opsc7311_wondertime_part2.adapters.TimesheetAdapter
+import com.example.opsc7311_wondertime_part2.databinding.ActivityCategoriesBinding
+import com.example.opsc7311_wondertime_part2.databinding.ActivityTimesheetsBinding
 import com.example.opsc7311_wondertime_part2.models.CategoriesRepository
 import com.example.opsc7311_wondertime_part2.models.TimesheetRepository
 import com.example.opsc7311_wondertime_part2.models.timesheetsModel
@@ -71,38 +76,20 @@ class TimesheetsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_timesheets)
+        val binding: ActivityTimesheetsBinding = ActivityTimesheetsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         database = Firebase.database.reference.child("Timesheets")
         storageRef = FirebaseStorage.getInstance().getReference("Images")
         requestCameraPermission()
 
         val bottomNav: BottomNavigationView = findViewById(R.id.bottomNavigationView)
+        bottomNav.selectedItemId = 0
         val timesheetRangePicker = findViewById<ImageView>(R.id.TimesheetRangePicker)
         rangeInput  = findViewById(R.id.timesheetRangeInput)
         plusTimeSheetButton = findViewById(R.id.plusTimeSheet)
         category_name = intent.getStringExtra("categoryName").toString()
         val timesheetsFiltered = timesheetsList.filter { it.category.equals(category_name, ignoreCase = true) }
 
-        database.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                timesheetsList.clear()
-                if (dataSnapshot.exists()) {
-                    for (studentsnapshot in dataSnapshot.children) {
-                        val studentModel = studentsnapshot.getValue(timesheetsModel::class.java)
-                        timesheetsList.add(studentModel!!)
-                    }
-                    // Filter the list after fetching the data
-                    val timesheetsFiltered = timesheetsList.filter { it.category.equals(category_name, ignoreCase = true) }
-
-                    // Update the adapter with the filtered list
-                    timesheetAdapter.submitList(timesheetsFiltered)
-                }
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-                Toast.makeText(this@TimesheetsActivity, databaseError.toString(), Toast.LENGTH_SHORT).show()
-            }
-        })
         val resId = R.drawable.test_image
         imageInput = Uri.parse("android.resource://${packageName}/$resId")
 
@@ -132,15 +119,36 @@ class TimesheetsActivity : AppCompatActivity() {
             }
         }
 
+        Handler(Looper.getMainLooper()).postDelayed({
         recyclerView = findViewById(R.id.t_recycler)
-
         timesheetAdapter = TimesheetAdapter(this, timesheetsFiltered )
-
         recyclerView.adapter = timesheetAdapter
-
         recyclerView.layoutManager = LinearLayoutManager(this)
 
+        database.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                timesheetsList.clear()
+                if (dataSnapshot.exists()) {
+                    for (studentsnapshot in dataSnapshot.children) {
+                        val studentModel = studentsnapshot.getValue(timesheetsModel::class.java)
+                        timesheetsList.add(studentModel!!)
+                    }
+                    val timesheetsFiltered = timesheetsList.filter { it.category.equals(category_name, ignoreCase = true) }
+                    timesheetAdapter.submitList(timesheetsFiltered)
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Toast.makeText(this@TimesheetsActivity, databaseError.toString(), Toast.LENGTH_SHORT).show()
+            }
+        })
+
         timesheetAdapter.notifyDataSetChanged()
+
+            binding.shimmerTimesheet.stopShimmer()
+            binding.shimmerTimesheet.visibility = View.GONE
+            recyclerView.visibility = View.VISIBLE
+        }, 5000)
 
         timesheetRangePicker.setOnClickListener{ showRangePicker() }
 

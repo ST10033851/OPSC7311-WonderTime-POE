@@ -73,7 +73,7 @@
                         android:orientation="horizontal">
 
                         <EditText
-                            android:id="@+id/categoryRangeInput"
+                            android:id="@+id/StatisticsRangeInput"
                             android:layout_width="300dp"
                             android:layout_height="wrap_content"
                             android:autofillHints=""
@@ -89,7 +89,7 @@
                             android:textSize="16sp" />
 
                         <ImageView
-                            android:id="@+id/CategoryRangePicker"
+                            android:id="@+id/StatisticsRangePicker"
                             android:layout_width="50dp"
                             android:layout_height="50dp"
                             android:contentDescription="@string/todo"
@@ -129,6 +129,7 @@
                             android:text="@string/monthly_goal_performance"
                             android:textColor="@color/black"
                             android:textSize="18sp"
+                            android:layout_marginStart="24dp"
                             android:layout_marginBottom="15dp"
                             android:textStyle="bold" />
 

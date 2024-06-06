@@ -1,9 +1,14 @@
 package com.example.opsc7311_wondertime_part2.activities
 
+import android.app.Dialog
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Box
@@ -18,13 +23,17 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.recyclerview.widget.LinearLayoutManager
 import antonkozyriatskyi.circularprogressindicator.CircularProgressIndicator
 import com.example.opsc7311_wondertime_part2.R
 import com.example.opsc7311_wondertime_part2.activities.ui.theme.OPSC7311_WonderTime_POETheme
+import com.example.opsc7311_wondertime_part2.adapters.TimesheetAdapter
 import com.example.opsc7311_wondertime_part2.databinding.ActivityStatisticsBinding
 import com.example.opsc7311_wondertime_part2.interfaces.rememberMarker
 import com.example.opsc7311_wondertime_part2.models.HomeModel
+import com.example.opsc7311_wondertime_part2.models.TimesheetRepository
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -55,6 +64,7 @@ import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.entry.entriesOf
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 
 class StatisticsActivity : AppCompatActivity() {
@@ -62,6 +72,9 @@ class StatisticsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val binding: ActivityStatisticsBinding = ActivityStatisticsBinding.inflate(layoutInflater)
         setContentView(R.layout.activity_statistics)
+
+        val StatisticsRangePicker: ImageView = findViewById(R.id.StatisticsRangePicker)
+        rangeInput = findViewById(R.id.StatisticsRangeInput)
 
         bottomNav= findViewById(R.id.bottomNavigationView)
         val user = FirebaseAuth.getInstance().currentUser!!
@@ -94,31 +107,79 @@ class StatisticsActivity : AppCompatActivity() {
                 else -> false
             }
         }
+        StatisticsRangePicker.setOnClickListener{ showRangePicker() }
         populateBarChart()
         populateLineGraph()
         fetchDataForCurrentMonth()
 
+
     }
 
-    private fun populateLineGraph() {
+    private fun showRangePicker() {
+
+        val materialDatePicker = MaterialDatePicker.Builder.dateRangePicker()
+            .setSelection(androidx.core.util.Pair(
+                MaterialDatePicker.thisMonthInUtcMilliseconds(),
+                MaterialDatePicker.todayInUtcMilliseconds()
+            ))
+            .build()
+
+        materialDatePicker.addOnPositiveButtonClickListener { selection ->
+            val date1 = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                .format(Date(selection.first ?: 0))
+            val date2 = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                .format(Date(selection.second ?: 0))
+
+            populateBarChart(date1, date2)
+            populateLineGraph(date1, date2)
+            rangeInput.setText(getString(R.string.to, date1, date2))
+
+        }
+
+        materialDatePicker.show(supportFragmentManager, "tag")
+    }
+
+
+    private fun populateLineGraph(startDate: String? = null, endDate: String? = null) {
         val minGoalsList = ArrayList<Int>()
         val maxGoalsList = ArrayList<Int>()
         val cyanColor = Color(0xFF00FFFF)
         val redColor = Color(0xFFFF2558)
         val composeView2 = findViewById<ComposeView>(R.id.compose_view2)
         var composedChartEntryModelProducer: ComposedChartEntryModelProducer? = null
+
         database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 minGoalsList.clear()
                 maxGoalsList.clear()
+                daysOfWeek.clear()
                 if (dataSnapshot.exists()) {
                     for (graphsnapshot in dataSnapshot.children) {
                         val graphModel = graphsnapshot.getValue(HomeModel::class.java)
                         val minGoal = graphModel?.minimumGoal
                         val maxGoal = graphModel?.maximumGoal
+                        val date = graphModel?.date
+
+                        val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                        val outputFormat = SimpleDateFormat("dd-MM", Locale.getDefault())
+
+                        if (startDate != null && endDate != null) {
+                            val startDateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                            val endDateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                            val parsedStartDate = startDateFormat.parse(startDate)
+                            val parsedEndDate = endDateFormat.parse(endDate)
+                            val parsedDate = inputFormat.parse(date!!)
+
+                            if (parsedDate != null && (parsedDate.before(parsedStartDate) || parsedDate.after(parsedEndDate))) {
+                                continue
+                            }
+                        }
+
+                        val parsedDate = inputFormat.parse(date!!)
+                        val formattedDate = outputFormat.format(parsedDate)
+                        daysOfWeek.add(formattedDate)
                         minGoalsList.add(minGoal!!)
                         maxGoalsList.add(maxGoal!!)
-                        Log.d("",maxGoalsList.toString())
                     }
 
                     composedChartEntryModelProducer = ComposedChartEntryModelProducer.build {
@@ -127,14 +188,12 @@ class StatisticsActivity : AppCompatActivity() {
                     }
                     composeView2.setContent {
 
-
                         val lineChart = lineChart(
                             lines = listOf(
                                 LineChart.LineSpec(
                                     lineColor = cyanColor.toArgb(),
                                     point = ShapeComponent(color = cyanColor.toArgb(), shape = Shapes.pillShape, strokeWidthDp = 1f)
                                 )
-
                             )
                         )
                         val lineChart2 = lineChart(
@@ -167,7 +226,7 @@ class StatisticsActivity : AppCompatActivity() {
                                             valueFormatter = bottomAxisValueFormatter,
                                             title = "Date",
                                         ),
-                                        legend = rememberLegend2(),
+                                        legend = rememberLegend(),
                                         marker = rememberMarker(),
                                         modifier = Modifier.height(300.dp),
                                         runInitialAnimation = true
@@ -185,13 +244,16 @@ class StatisticsActivity : AppCompatActivity() {
         })
     }
 
-    private fun populateBarChart() {
+
+    private fun populateBarChart(startDate: String? = null, endDate: String? = null) {
         val actualHoursList = ArrayList<Int>()
         val composeView = findViewById<ComposeView>(R.id.compose_view)
         var composedChartEntryModelProducer: ComposedChartEntryModelProducer? = null
+
         database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 actualHoursList.clear()
+                daysOfWeek.clear()
                 if (dataSnapshot.exists()) {
                     for (graphsnapshot in dataSnapshot.children) {
                         val graphModel = graphsnapshot.getValue(HomeModel::class.java)
@@ -200,6 +262,19 @@ class StatisticsActivity : AppCompatActivity() {
 
                         val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                         val outputFormat = SimpleDateFormat("dd-MM", Locale.getDefault())
+
+                        if (startDate != null && endDate != null) {
+                            val startDateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                            val endDateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                            val parsedStartDate = startDateFormat.parse(startDate)
+                            val parsedEndDate = endDateFormat.parse(endDate)
+                            val parsedDate = inputFormat.parse(date!!)
+
+                            if (parsedDate != null && (parsedDate.before(parsedStartDate) || parsedDate.after(parsedEndDate))) {
+                                continue
+                            }
+                        }
+
                         val parsedDate = inputFormat.parse(date!!)
                         val formattedDate = outputFormat.format(parsedDate)
                         daysOfWeek.add(formattedDate)
@@ -232,7 +307,7 @@ class StatisticsActivity : AppCompatActivity() {
                                     modifier = Modifier
                                 ) {
                                     Chart(
-                                        chart = remember(columnChart) { columnChart},
+                                        chart = remember(columnChart) { columnChart },
                                         chartModelProducer = composedChartEntryModelProducer!!,
                                         startAxis = rememberStartAxis(),
                                         bottomAxis = rememberBottomAxis(
@@ -262,6 +337,7 @@ class StatisticsActivity : AppCompatActivity() {
             }
         })
     }
+
 
     private fun fetchDataForCurrentMonth() {
         val minGoalsList = ArrayList<Int>()
@@ -397,6 +473,7 @@ class StatisticsActivity : AppCompatActivity() {
     private val chartColors = listOf(Color(0xFF6200EE))
     private val chartColors2 = listOf(Color(0xFFFF2558),Color(0xFF00FFFF) )
     private var daysOfWeek = ArrayList<String>()
+    private lateinit var rangeInput: EditText
     private val labels = listOf("Total Hours")
     private val labels2 = listOf("Minimum Hours", "Maximum Hours")
     private val bottomAxisValueFormatter =

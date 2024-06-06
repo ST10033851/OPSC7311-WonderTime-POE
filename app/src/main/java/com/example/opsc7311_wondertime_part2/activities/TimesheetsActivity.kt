@@ -14,9 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.provider.MediaStore
 import android.view.Gravity
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
@@ -33,13 +31,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.opsc7311_wondertime_part2.R
 import com.example.opsc7311_wondertime_part2.adapters.TimesheetAdapter
-import com.example.opsc7311_wondertime_part2.databinding.ActivityCategoriesBinding
 import com.example.opsc7311_wondertime_part2.databinding.ActivityTimesheetsBinding
-import com.example.opsc7311_wondertime_part2.models.CategoriesRepository
 import com.example.opsc7311_wondertime_part2.models.TimesheetRepository
 import com.example.opsc7311_wondertime_part2.models.timesheetsModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.button.MaterialButton
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.Firebase
@@ -62,33 +57,40 @@ import java.util.UUID
 class TimesheetsActivity : AppCompatActivity() {
 
     private val timesheetsList = TimesheetRepository.getTimesheetsList()
+
     private lateinit var timesheetAdapter: TimesheetAdapter
     private lateinit var recyclerView: RecyclerView
-    private val CAMERA_PERMISSION_REQUEST_CODE = 1001
     private lateinit var plusTimeSheetButton: FloatingActionButton
     private lateinit var imageView: ImageView
-    private lateinit var imageInput : Uri
+    private lateinit var imageInput: Uri
     private lateinit var photoUri: Uri
-    private lateinit var category_name: String
+    private lateinit var categoryName: String
     private lateinit var rangeInput: EditText
     private lateinit var database: DatabaseReference
     private lateinit var storageRef: StorageReference
+
+    private val CAMERA_PERMISSION_REQUEST_CODE = 1001
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding: ActivityTimesheetsBinding = ActivityTimesheetsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         database = Firebase.database.reference.child("Timesheets")
         storageRef = FirebaseStorage.getInstance().getReference("Images")
+
         requestCameraPermission()
 
         val bottomNav: BottomNavigationView = findViewById(R.id.bottomNavigationView)
         bottomNav.selectedItemId = 0
-        val timesheetRangePicker = findViewById<ImageView>(R.id.TimesheetRangePicker)
-        rangeInput  = findViewById(R.id.timesheetRangeInput)
+
+        val timesheetRangePicker: ImageView = findViewById(R.id.TimesheetRangePicker)
+        rangeInput = findViewById(R.id.timesheetRangeInput)
         plusTimeSheetButton = findViewById(R.id.plusTimeSheet)
-        category_name = intent.getStringExtra("categoryName").toString()
-        val timesheetsFiltered = timesheetsList.filter { it.category.equals(category_name, ignoreCase = true) }
+
+        categoryName = intent.getStringExtra("categoryName").toString()
+        val timesheetsFiltered = timesheetsList.filter { it.category.equals(categoryName, ignoreCase = true) }
 
         val resId = R.drawable.test_image
         imageInput = Uri.parse("android.resource://${packageName}/$resId")
@@ -133,7 +135,7 @@ class TimesheetsActivity : AppCompatActivity() {
                         val studentModel = studentsnapshot.getValue(timesheetsModel::class.java)
                         timesheetsList.add(studentModel!!)
                     }
-                    val timesheetsFiltered = timesheetsList.filter { it.category.equals(category_name, ignoreCase = true) }
+                    val timesheetsFiltered = timesheetsList.filter { it.category.equals(categoryName, ignoreCase = true) }
                     timesheetAdapter.submitList(timesheetsFiltered)
                 }
             }
@@ -203,7 +205,7 @@ class TimesheetsActivity : AppCompatActivity() {
                 val endDate = dateFormat.parse(date2)
 
                 itemDate != null && !itemDate.before(startDate) && !itemDate.after(endDate)
-                        && it.category.equals(category_name, ignoreCase = true)
+                        && it.category.equals(categoryName, ignoreCase = true)
             }
 
             timesheetAdapter.notifyDataSetChanged()
@@ -224,7 +226,7 @@ class TimesheetsActivity : AppCompatActivity() {
         val descriptionInput = dialog.findViewById<EditText>(R.id.DescriptionInput)
         val startTimeInput = dialog.findViewById<EditText>(R.id.StartTimeInput)
         val endTimeInput = dialog.findViewById<EditText>(R.id.EndTimeInput)
-        val CategoryInput = category_name
+        val CategoryInput = categoryName
 
         val saveBtn = dialog.findViewById<TextView>(R.id.saveTimesheet)
         val uploadImageBtn = dialog.findViewById<ImageView>(R.id.UploadImageBtn)
@@ -336,7 +338,7 @@ class TimesheetsActivity : AppCompatActivity() {
                         }
                     })
 
-                    TimesheetRepository.updateTotalHours(category_name, Timesheetduration)
+                    TimesheetRepository.updateTotalHours(categoryName, Timesheetduration)
                     TimesheetRepository.updateDailyTotalHours(Timesheetduration)
                     updateAdapter()
                     dialog.dismiss()
@@ -417,7 +419,7 @@ class TimesheetsActivity : AppCompatActivity() {
 
     private fun updateAdapter(){
         val timesheetsList = TimesheetRepository.getTimesheetsList()
-        val timesheetsFiltered = timesheetsList.filter { it.category.equals(category_name, ignoreCase = true) }
+        val timesheetsFiltered = timesheetsList.filter { it.category.equals(categoryName, ignoreCase = true) }
 
         recyclerView = findViewById(R.id.t_recycler)
         timesheetAdapter = TimesheetAdapter(this, timesheetsFiltered )

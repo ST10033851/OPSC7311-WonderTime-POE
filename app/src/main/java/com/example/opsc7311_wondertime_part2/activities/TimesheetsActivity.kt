@@ -217,7 +217,7 @@ class TimesheetsActivity : AppCompatActivity() {
 
     }
 
-    private fun showBottomDialog() {
+    fun showBottomDialog(timesheet: timesheetsModel? = null) {
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.fragment_new_timesheet_)
@@ -227,6 +227,14 @@ class TimesheetsActivity : AppCompatActivity() {
         val startTimeInput = dialog.findViewById<EditText>(R.id.StartTimeInput)
         val endTimeInput = dialog.findViewById<EditText>(R.id.EndTimeInput)
         val CategoryInput = categoryName
+
+        timesheet?.let {
+            dateInput.setText(it.date)
+            descriptionInput.setText(it.description)
+            startTimeInput.setText(it.startTime)
+            endTimeInput.setText(it.endTime)
+            imageInput = Uri.parse(it.imageUri)
+        }
 
         val saveBtn = dialog.findViewById<TextView>(R.id.saveTimesheet)
         val uploadImageBtn = dialog.findViewById<ImageView>(R.id.UploadImageBtn)
@@ -241,7 +249,7 @@ class TimesheetsActivity : AppCompatActivity() {
 
         val datePicker = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
             myCalender.set(Calendar.YEAR, year)
-            myCalender.set(Calendar.MONTH,month)
+            myCalender.set(Calendar.MONTH, month)
             myCalender.set(Calendar.DAY_OF_MONTH, dayOfMonth)
             if (myCalender != null) {
                 dateInput.setText(sdf.format(myCalender.time))
@@ -269,11 +277,13 @@ class TimesheetsActivity : AppCompatActivity() {
             }
         })
 
-
-        DatePickerbtn.setOnClickListener{
-            DatePickerDialog(this,datePicker,myCalender.get(Calendar.YEAR), myCalender.get(Calendar.MONTH),
-                myCalender.get(Calendar.DAY_OF_MONTH)).show()
+        DatePickerbtn.setOnClickListener {
+            DatePickerDialog(
+                this, datePicker, myCalender.get(Calendar.YEAR), myCalender.get(Calendar.MONTH),
+                myCalender.get(Calendar.DAY_OF_MONTH)
+            ).show()
         }
+
         uploadImageBtn.setOnClickListener {
             imageView = dialog.findViewById(R.id.UploadImage)
             val options = arrayOf("Choose from Gallery", "Take Photo")
@@ -289,7 +299,6 @@ class TimesheetsActivity : AppCompatActivity() {
                     }
                 }
                 .show()
-
         }
 
         saveBtn.setOnClickListener {
@@ -346,7 +355,6 @@ class TimesheetsActivity : AppCompatActivity() {
             }
         }
 
-
         cancelButton.setOnClickListener { dialog.dismiss() }
         dialog.show()
         dialog.window!!.setLayout(
@@ -357,6 +365,7 @@ class TimesheetsActivity : AppCompatActivity() {
         dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
         dialog.window!!.setGravity(Gravity.BOTTOM)
     }
+
 
     private fun uploadImageToFirebase(uri: Uri, onSuccess: (String) -> Unit) {
         val storageRef = FirebaseStorage.getInstance().reference

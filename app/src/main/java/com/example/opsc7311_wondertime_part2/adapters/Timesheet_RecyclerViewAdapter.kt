@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.opsc7311_wondertime_part2.R
+import com.example.opsc7311_wondertime_part2.activities.TimesheetsActivity
 import com.example.opsc7311_wondertime_part2.models.timesheetsModel
 
 class TimesheetAdapter(val c: Context, var timesheetList: List<timesheetsModel>) : RecyclerView.Adapter<TimesheetAdapter.TimeViewHolder>(){
@@ -19,6 +20,7 @@ class TimesheetAdapter(val c: Context, var timesheetList: List<timesheetsModel>)
         val startTime = v.findViewById<TextView>(R.id.StartTime)
         val endTime = v.findViewById<TextView>(R.id.EndTime)
         val Image = v.findViewById<ImageView>(R.id.image)
+        val DuplicateImage = v.findViewById<ImageView>(R.id.duplicateIcon)
 
     }
 
@@ -49,6 +51,10 @@ class TimesheetAdapter(val c: Context, var timesheetList: List<timesheetsModel>)
             .placeholder(R.drawable.test_image)
             .error(R.drawable.test_image)
             .into(holder.Image)
+
+        holder.DuplicateImage.setOnClickListener {
+            (holder.itemView.context as TimesheetsActivity).showBottomDialog(newTimeSheet)
+        }
 
     }
 }

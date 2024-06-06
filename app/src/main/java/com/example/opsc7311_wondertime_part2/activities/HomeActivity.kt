@@ -247,7 +247,7 @@ class HomeActivity : AppCompatActivity() {
         val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val formattedDate = formatter.format(currentDate)
 
-        val newDailyGoal = HomeModel(min, max, formattedDate)
+        val newDailyGoal = HomeModel(min, max, formattedDate,0)
         HomeRepository.addDailyGoal(newDailyGoal)
 
         val newCategoryRef = database.push()

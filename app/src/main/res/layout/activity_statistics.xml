@@ -100,17 +100,50 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginStart="24dp"
-                        android:layout_marginEnd="24dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
                         android:orientation="vertical">
 
-                        <com.anychart.AnyChartView
-                            android:id="@+id/any_chart_view"
+                        <androidx.compose.ui.platform.ComposeView
+                            android:id="@+id/compose_view"
                             android:layout_width="match_parent"
-                            android:background="@drawable/progress_bar_layout"
-                            android:elevation="20dp"
-                            android:layout_height="500dp" />
+                            android:layout_height="300dp"
+                            android:layout_marginStart="24dp"
+                            android:layout_marginEnd="24dp"
+                            />
 
+                        <androidx.compose.ui.platform.ComposeView
+                            android:id="@+id/compose_view2"
+                            android:layout_width="match_parent"
+                            android:layout_height="400dp"
+                            android:layout_marginStart="24dp"
+                            android:layout_marginEnd="24dp"
+                            />
+
+
+                        <TextView
+                            android:id="@+id/ProgressHours"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
+                            android:fontFamily="@font/mplus_rounded"
+                            android:text="@string/monthly_goal_performance"
+                            android:textColor="@color/black"
+                            android:textSize="18sp"
+                            android:layout_marginBottom="15dp"
+                            android:textStyle="bold" />
+
+                        <antonkozyriatskyi.circularprogressindicator.CircularProgressIndicator
+                            android:id="@+id/circular_progress"
+                            android:layout_width="200dp"
+                            android:layout_height="200dp"
+                            android:layout_gravity="center"
+                            android:layout_marginBottom="150dp"
+                            android:layout_marginTop="8dp"
+                            app:progressColor="@color/purple"
+                            app:progressCap="round"
+                            app:progressStrokeWidth="16dp"
+                            app:textColor="#3D13FB"
+                            app:enableProgressAnimation="true"/>
                     </LinearLayout>
 
 

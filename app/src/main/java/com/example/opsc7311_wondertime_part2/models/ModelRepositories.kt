@@ -1,6 +1,9 @@
 package com.example.opsc7311_wondertime_part2.models
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 object TimesheetRepository {
     private val timesheetsList = ArrayList<timesheetsModel>()
@@ -21,32 +24,59 @@ object TimesheetRepository {
             val database = FirebaseDatabase.getInstance()
             val categoriesRef = database.getReference("Categories").child(uid)
 
-            // Get the current total hours for the category
             categoriesRef.child(categoryName).child("totalHours").addListenerForSingleValueEvent(
                 object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         val currentTotalHours = dataSnapshot.getValue(Int::class.java) ?: 0
                         val newTotalHours = currentTotalHours + duration
 
-                        // Update the total hours in the database
                         val categoryUpdates = mapOf<String, Any>(
                             "totalHours" to newTotalHours
                         )
 
                         categoriesRef.child(categoryName).updateChildren(categoryUpdates)
                             .addOnSuccessListener {
-                                // Update successful
                             }
                             .addOnFailureListener { exception ->
-                                // Handle update failure
                             }
                     }
 
                     override fun onCancelled(databaseError: DatabaseError) {
-                        // Handle database error
                     }
                 }
             )
+        }
+    }
+
+    fun updateDailyTotalHours(duration:Int){
+        val user = FirebaseAuth.getInstance().currentUser
+        val userId = user?.uid
+
+        userId?.let { uid ->
+            val database = FirebaseDatabase.getInstance()
+            val goalsRef = database.getReference("DailyHours").child(uid)
+
+            val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val today = sdf.format(Date())
+
+            goalsRef.orderByChild("date").equalTo(today)
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        for (snapshot in dataSnapshot.children) {
+                            val currentTotalHours = snapshot.child("totalHours").getValue(Int::class.java) ?: 0
+                            val newTotalHours = currentTotalHours + duration
+
+                            snapshot.ref.child("totalHours").setValue(newTotalHours)
+                                .addOnSuccessListener {
+                                }
+                                .addOnFailureListener { exception ->
+                                }
+                        }
+                    }
+
+                    override fun onCancelled(databaseError: DatabaseError) {
+                    }
+                })
         }
     }
 

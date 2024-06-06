@@ -76,4 +76,5 @@
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
     <string name="title_activity_graph">GraphActivity</string>
+    <string name="monthly_goal_performance">Monthly Goal Performance</string>
 </resources>

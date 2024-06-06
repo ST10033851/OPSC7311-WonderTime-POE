@@ -337,6 +337,7 @@ class TimesheetsActivity : AppCompatActivity() {
                     })
 
                     TimesheetRepository.updateTotalHours(category_name, Timesheetduration)
+                    TimesheetRepository.updateDailyTotalHours(Timesheetduration)
                     updateAdapter()
                     dialog.dismiss()
                 }

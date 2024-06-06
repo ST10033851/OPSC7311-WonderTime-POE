@@ -77,4 +77,7 @@
     </string>
     <string name="title_activity_graph">GraphActivity</string>
     <string name="monthly_goal_performance">Monthly Goal Performance</string>
+    <string name="profile">PROFILE</string>
+    <string name="your_email">YOUR EMAIL</string>
+    <string name="tristanf_gmail_com">TristanF@gmail.com</string>
 </resources>

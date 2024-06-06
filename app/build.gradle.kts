@@ -90,4 +90,6 @@ dependencies {
     implementation("com.patrykandpatrick.vico:core:1.14.0")
     implementation("com.patrykandpatrick.vico:views:1.14.0")
     implementation("com.github.antonKozyriatskyi:CircularProgressIndicator:1.3.0")
+    implementation("com.squareup.picasso:picasso:2.71828")
+
 }

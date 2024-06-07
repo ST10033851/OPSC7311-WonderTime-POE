@@ -168,52 +168,30 @@ class ProfileActivity : AppCompatActivity()
     }
 
     //the following function will calculate the items (eg. number of categories) and display it to the user
-    private fun getAndDisplayUserData()
-    {
-        //lets get the profile image first
+    private fun getAndDisplayUserData() {
         getProfileImage()
-        //now lets get the profile data
-        //email retrieval
-        databaseRef.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val email = snapshot.child("email").getValue(String::class.java) ?:""
+        //get user Email and display oit
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        currentUser?.let { user ->
+            val userEmail = user.email
+            emailAddress.setText(userEmail)
 
-                // Count the number of categories
-                var categoriesCount = 0
-                snapshot.child("categories").children.forEach { _ ->
-                    categoriesCount++
-                }
-                // Count the number of time sheets
-                var timeSheetsCount = 0
-                snapshot.child("timeSheets").children.forEach { _ ->
-                    timeSheetsCount++
-                }
-                // Count the number of goals
-                var goalsCount = 0
-                snapshot.child("goals").children.forEach { _ ->
-                    goalsCount++
-                }
+            val databaseRef = Firebase.database.reference
+            val categoriesRef = databaseRef.child("categories").child(user.uid)
+            var numCategories = 0
 
-                var hoursWorked = 0;
-                for(timesheetSnap in snapshot.child("timesheets").children)
-                {
-                    val timesheet = timesheetSnap.getValue(timesheetsModel::class.java)
-                    timesheet?.let{
-                        hoursWorked += it.duration
-                    }
+            categoriesRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    numCategories = snapshot.childrenCount.toInt()
+                    numberOfCategories.setText(numCategories.toString())
                 }
-                //now we populate our editText fields with retrieved data
-                emailAddress.setText(email)
-                numberOfCategories.setText(categoriesCount.toString())
-                numberOfTimeSheets.setText(timeSheetsCount.toString())
-                numberOfGoals.setText(goalsCount.toString())
-                totalHoursWorked.setText(hoursWorked.toString())
-            }
-            override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(this@ProfileActivity, "Database Error (E740)", Toast.LENGTH_SHORT).show()
-            }
-        })
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+            })
+        }
     }
+
     private fun handleProfileNavigation() {
         startActivity(Intent(this, ProfileActivity::class.java))
     }

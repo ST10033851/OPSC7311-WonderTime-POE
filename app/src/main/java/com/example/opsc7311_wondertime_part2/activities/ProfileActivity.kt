@@ -208,6 +208,39 @@ class ProfileActivity : AppCompatActivity()
                     TODO("Not yet implemented")
                 }
             })
+
+            val dailyHoursRef = databaseRef.child("DailyHours").child(user.uid)
+            var numGoals = 0
+
+            dailyHoursRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    numGoals = snapshot.childrenCount.toInt()
+                    numberOfGoals.setText(numGoals.toString())
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+            })
+            val timesheetsRef = databaseRef.child("Timesheets")
+            var hoursWorked = 0
+
+            timesheetsRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    snapshot.children.forEach { timesheetSnapshot ->
+                        val timesheetUserID = timesheetSnapshot.child("userId").getValue(String::class.java)
+                        val duration = timesheetSnapshot.child("duration").getValue(Int::class.java)
+
+                        if (timesheetUserID == user.uid && duration != null) {
+                            hoursWorked += duration
+                        }
+                    }
+                    totalHoursWorked.setText(hoursWorked.toString())
+                }
+                override fun onCancelled(error: DatabaseError) {
+                    // Handle error
+                }
+            })
         }
     }
 

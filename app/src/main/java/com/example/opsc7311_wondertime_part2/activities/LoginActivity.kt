@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import com.example.opsc7311_wondertime_part2.R
 import com.example.opsc7311_wondertime_part2.databinding.ActivityLoginBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -22,6 +23,7 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        enableEdgeToEdge()
 
         firebaseAuth = FirebaseAuth.getInstance()
 

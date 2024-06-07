@@ -226,7 +226,7 @@ class StatisticsActivity : AppCompatActivity() {
                                             valueFormatter = bottomAxisValueFormatter,
                                             title = "Date",
                                         ),
-                                        legend = rememberLegend(),
+                                        legend = rememberLegend2(),
                                         marker = rememberMarker(),
                                         modifier = Modifier.height(300.dp),
                                         runInitialAnimation = true

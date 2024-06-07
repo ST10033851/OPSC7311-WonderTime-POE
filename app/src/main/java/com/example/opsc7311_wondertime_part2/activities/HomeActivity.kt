@@ -32,8 +32,10 @@ import java.util.Locale
 
 class HomeActivity : AppCompatActivity() {
     private val timesheetsList = TimesheetRepository.getTimesheetsList()
+
     var minGoalTime = 0
     var maxGoalTime = 0
+
     private lateinit var minGoal: TextView
     private lateinit var maxGoal: TextView
     private lateinit var mincheckImage: ImageView

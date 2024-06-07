@@ -36,7 +36,7 @@ class RegisterActivity : AppCompatActivity() {
             if (email.isNotEmpty() && password.isNotEmpty()) {
 
                 if (validPassword() == null && validEmail() == null) {
-                    // Password is valid, proceed with registration of the user
+                    // If password is valid, it will proceed with registration of the user
                     firebaseAuth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener(this) { task ->
                             if (task.isSuccessful) {
@@ -51,7 +51,7 @@ class RegisterActivity : AppCompatActivity() {
                         }
                 }
             } else {
-                // Show a message if email or password is empty
+                // Shows a message if email or password is empty
                 Toast.makeText(this, "Enter email and password", Toast.LENGTH_SHORT).show()
             }
         }
@@ -62,7 +62,8 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
-    fun PasswordListener(){
+    //This function is used to check for password validation as the user types
+    private fun PasswordListener(){
         binding.passwordInput.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 binding.passwordContainer.helperText = validPassword()
@@ -97,6 +98,7 @@ class RegisterActivity : AppCompatActivity() {
 
     }
 
+    // Returns invalid if an email address is incorrect format
     private fun validEmail(): String?{
         val emailText = binding.emailAdrdessInput.text.toString()
         if(!Patterns.EMAIL_ADDRESS.matcher(emailText).matches()){
@@ -105,6 +107,7 @@ class RegisterActivity : AppCompatActivity() {
         return null
     }
 
+    //Returns various password validation messages to the user
     private fun validPassword(): String? {
         val passwordText = binding.passwordInput.text.toString()
         if (passwordText.length < 8) {

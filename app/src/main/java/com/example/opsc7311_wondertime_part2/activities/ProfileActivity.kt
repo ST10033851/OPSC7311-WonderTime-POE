@@ -60,8 +60,10 @@ class ProfileActivity : AppCompatActivity()
 
         bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.home -> true
-
+                R.id.home -> {
+                    handleHomeNavigation()
+                    true
+                }
                 R.id.categories -> {
                     handleCategoriesNavigation()
                     true
@@ -243,7 +245,10 @@ class ProfileActivity : AppCompatActivity()
             })
         }
     }
-
+    private fun handleHomeNavigation()
+    {
+    startActivity(Intent(this,HomeActivity::class.java))
+    }
     private fun handleProfileNavigation() {
         startActivity(Intent(this, ProfileActivity::class.java))
     }

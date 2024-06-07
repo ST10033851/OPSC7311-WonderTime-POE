@@ -1,4 +1,5 @@
 package com.example.opsc7311_wondertime_part2.activities
+import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
@@ -9,9 +10,12 @@ import com.example.opsc7311_wondertime_part2.R
 import com.google.android.material.imageview.ShapeableImageView
 import android.net.Uri
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.ui.res.stringResource
 import com.example.opsc7311_wondertime_part2.models.timesheetsModel
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -43,7 +47,6 @@ class ProfileActivity : AppCompatActivity()
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
 
         setContentView(R.layout.activity_profile)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main))
@@ -52,16 +55,48 @@ class ProfileActivity : AppCompatActivity()
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        val bottomNav: BottomNavigationView = findViewById(R.id.bottomNavigationView)
+        bottomNav.selectedItemId = R.id.home
+
+        bottomNav.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.home -> true
+
+                R.id.categories -> {
+                    handleCategoriesNavigation()
+                    true
+                }
+                R.id.graph -> {
+                    handleGraphNavigation()
+                    true
+                }
+
+                R.id.profile -> {
+                    handleProfileNavigation()
+                    true
+                }
+
+                else -> false
+            }
+        }
         //calling my functions
-        databaseSetup()
         viewsInitialisation()
+        databaseSetup()
         imageSelectionSetup()
+        // Get and display the users data
+        getAndDisplayUserData()
     }
+
     //below are all my functions that handle the logic related to the user changing their profile picture
     private fun viewsInitialisation()
     {
         profileImageView = findViewById(R.id.profileImageView)
         selectImageTextView = findViewById(R.id.selectImageView)
+        emailAddress = findViewById(R.id.emailAddress)
+        numberOfCategories = findViewById(R.id.numberOfCategories)
+        numberOfTimeSheets = findViewById(R.id.numberOfTimeSheets)
+        numberOfGoals = findViewById(R.id.numberOfGoals)
+        totalHoursWorked = findViewById(R.id.totalHoursWorked)
     }
     //
     private fun databaseSetup()
@@ -178,5 +213,19 @@ class ProfileActivity : AppCompatActivity()
                 Toast.makeText(this@ProfileActivity, "Database Error (E740)", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+    private fun handleProfileNavigation() {
+        startActivity(Intent(this, ProfileActivity::class.java))
+    }
+
+    private fun handleGraphNavigation() {
+        startActivity(Intent(this, StatisticsActivity::class.java))
+    }
+
+    private fun handleCategoriesNavigation(){
+        startActivity(Intent(this, CategoriesActivity::class.java))
+    }
+    private fun handleOtherNavigation(){
+        Toast.makeText(this, "Coming soon!", Toast.LENGTH_SHORT).show()
     }
 }

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
+import android.media.Image
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -34,6 +35,7 @@ class HomeActivity : AppCompatActivity() {
     private val timesheetsList = TimesheetRepository.getTimesheetsList()
     var minGoalTime = 0
     var maxGoalTime = 0
+    private lateinit var logoutLogo: ImageView
     private lateinit var minGoal: TextView
     private lateinit var maxGoal: TextView
     private lateinit var mincheckImage: ImageView
@@ -55,8 +57,9 @@ class HomeActivity : AppCompatActivity() {
         val minTimeDisplay: TextView = findViewById(R.id.MinTimeDisplay)
         val maxTimeDisplay: TextView = findViewById(R.id.MaxTimeDisplay)
         TimepickerBtn = findViewById(R.id.picker)
-        minGoal= findViewById(R.id.MinimumGoalInput)
-        maxGoal= findViewById(R.id.MaximumGoalInput)
+        minGoal = findViewById(R.id.MinimumGoalInput)
+        maxGoal = findViewById(R.id.MaximumGoalInput)
+        logoutLogo = findViewById(R.id.logo)
 
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val todayDate = dateFormat.format(Date())
@@ -121,6 +124,7 @@ class HomeActivity : AppCompatActivity() {
                     handleCategoriesNavigation()
                     true
                 }
+
                 R.id.graph -> {
                     handleGraphNavigation()
                     true
@@ -154,12 +158,12 @@ class HomeActivity : AppCompatActivity() {
             }
         })
         val themeSelectorImageView = findViewById<ImageView>(R.id.themeSelecter)
-        themeSelectorImageView.setOnClickListener{
+        themeSelectorImageView.setOnClickListener {
             handleOtherNavigation()
         }
 
         val achievementsSelectorImageView = findViewById<ImageView>(R.id.achievements)
-        achievementsSelectorImageView.setOnClickListener{
+        achievementsSelectorImageView.setOnClickListener {
             handleOtherNavigation()
         }
 
@@ -168,8 +172,7 @@ class HomeActivity : AppCompatActivity() {
             val min = minGoal.text.toString()
             val max = maxGoal.text.toString()
 
-            if(min.isEmpty() || max.isEmpty())
-            {
+            if (min.isEmpty() || max.isEmpty()) {
                 val errorDialog = Dialog(this)
                 errorDialog.setContentView(R.layout.error_dialog)
                 errorDialog.setCancelable(false)
@@ -180,8 +183,7 @@ class HomeActivity : AppCompatActivity() {
                     errorDialog.dismiss()
                 }
                 errorDialog.show()
-            }
-            else{
+            } else {
                 val sharedPreferences = getSharedPreferences("DailyGoalPrefs", Context.MODE_PRIVATE)
                 val lastSavedDate = sharedPreferences.getLong("lastSavedDate", 0)
 
@@ -190,11 +192,16 @@ class HomeActivity : AppCompatActivity() {
 
                     sharedPreferences.edit().putLong("lastSavedDate", currentDate).apply()
                 } else {
-                    Toast.makeText(this@HomeActivity, "Daily Goal already saved for today!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this@HomeActivity,
+                        "Daily Goal already saved for today!",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
 
             }
         }
+        setupLogoClickListener()
     }
 
     private fun handleProfileNavigation() {
@@ -205,39 +212,39 @@ class HomeActivity : AppCompatActivity() {
         startActivity(Intent(this, StatisticsActivity::class.java))
     }
 
-    private fun handleCategoriesNavigation(){
+    private fun handleCategoriesNavigation() {
         startActivity(Intent(this, CategoriesActivity::class.java))
     }
-    private fun handleOtherNavigation(){
+
+    private fun handleOtherNavigation() {
         Toast.makeText(this, "Coming soon!", Toast.LENGTH_SHORT).show()
     }
 
-    private fun showGoalConfirmationDialog()
-    {
-        val minGoal= findViewById<TextView>(R.id.MinimumGoalInput)
-        val maxGoal= findViewById<TextView>(R.id.MaximumGoalInput)
+    private fun showGoalConfirmationDialog() {
+        val minGoal = findViewById<TextView>(R.id.MinimumGoalInput)
+        val maxGoal = findViewById<TextView>(R.id.MaximumGoalInput)
         val alertDialog = AlertDialog.Builder(this)
         alertDialog.setTitle("Save goals")
-        alertDialog.setMessage("Note: You can set your minimum and maximum goals for today. " +
-                "\nAfter saving, you won't be able to enter another goal until tomorrow.")
+        alertDialog.setMessage(
+            "Note: You can set your minimum and maximum goals for today. " +
+                    "\nAfter saving, you won't be able to enter another goal until tomorrow."
+        )
         alertDialog.setPositiveButton("Yes")
-        {
-            dialog, _ ->
-                saveDailyGoal()
-                minGoal.text = ""
-                maxGoal.text = ""
-                TimepickerBtn.isEnabled = false
+        { dialog, _ ->
+            saveDailyGoal()
+            minGoal.text = ""
+            maxGoal.text = ""
+            TimepickerBtn.isEnabled = false
             dialog.dismiss()
         }
         alertDialog.setNegativeButton("No")
-        {
-                dialog, _ ->
+        { dialog, _ ->
             dialog.dismiss()
         }
         alertDialog.show()
     }
-    private fun saveDailyGoal()
-    {
+
+    private fun saveDailyGoal() {
         val minTimeDisplay: TextView = findViewById(R.id.MinTimeDisplay)
         val maxTimeDisplay: TextView = findViewById(R.id.MaxTimeDisplay)
         val min = minGoalTime
@@ -247,7 +254,7 @@ class HomeActivity : AppCompatActivity() {
         val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val formattedDate = formatter.format(currentDate)
 
-        val newDailyGoal = HomeModel(min, max, formattedDate,0)
+        val newDailyGoal = HomeModel(min, max, formattedDate, 0)
         HomeRepository.addDailyGoal(newDailyGoal)
 
         val newCategoryRef = database.push()
@@ -255,7 +262,15 @@ class HomeActivity : AppCompatActivity() {
 
         minTimeDisplay.text = minGoal.text
         maxTimeDisplay.text = maxGoal.text
+    }
 
-
+    private fun setupLogoClickListener() {
+        logoutLogo.setOnClickListener {
+            FirebaseAuth.getInstance().signOut()
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
+        }
     }
 }

@@ -177,13 +177,32 @@ class ProfileActivity : AppCompatActivity()
             emailAddress.setText(userEmail)
 
             val databaseRef = Firebase.database.reference
-            val categoriesRef = databaseRef.child("categories").child(user.uid)
+            val categoriesRef = databaseRef.child("Categories").child(user.uid)
             var numCategories = 0
 
             categoriesRef.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     numCategories = snapshot.childrenCount.toInt()
                     numberOfCategories.setText(numCategories.toString())
+                }
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+            })
+
+            val timesheetRef = databaseRef.child("Timesheets")
+            var numTimesheets = 0
+
+            timesheetRef.addListenerForSingleValueEvent(object : ValueEventListener{
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    snapshot.children.forEach{ timesheetSnapshot ->
+                        val timesheetUserID = timesheetSnapshot.child("userId").getValue(String::class.java)
+                        if(timesheetUserID == user.uid)
+                        {
+                            numTimesheets++
+                        }
+                    }
+                    numberOfTimeSheets.setText(numTimesheets.toString())
                 }
                 override fun onCancelled(error: DatabaseError) {
                     TODO("Not yet implemented")

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
-import android.media.Image
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -35,7 +34,6 @@ class HomeActivity : AppCompatActivity() {
     private val timesheetsList = TimesheetRepository.getTimesheetsList()
     var minGoalTime = 0
     var maxGoalTime = 0
-    private lateinit var logoutLogo: ImageView
     private lateinit var minGoal: TextView
     private lateinit var maxGoal: TextView
     private lateinit var mincheckImage: ImageView
@@ -59,7 +57,6 @@ class HomeActivity : AppCompatActivity() {
         TimepickerBtn = findViewById(R.id.picker)
         minGoal = findViewById(R.id.MinimumGoalInput)
         maxGoal = findViewById(R.id.MaximumGoalInput)
-        logoutLogo = findViewById(R.id.logo)
 
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val todayDate = dateFormat.format(Date())
@@ -201,7 +198,6 @@ class HomeActivity : AppCompatActivity() {
 
             }
         }
-        setupLogoClickListener()
     }
 
     private fun handleProfileNavigation() {
@@ -264,13 +260,4 @@ class HomeActivity : AppCompatActivity() {
         maxTimeDisplay.text = maxGoal.text
     }
 
-    private fun setupLogoClickListener() {
-        logoutLogo.setOnClickListener {
-            FirebaseAuth.getInstance().signOut()
-            val intent = Intent(this, LoginActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
-            finish()
-        }
-    }
 }

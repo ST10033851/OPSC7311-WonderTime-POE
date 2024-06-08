@@ -1,27 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".activities.AchievmentActivity"
-    android:padding="16dp">
+    tools:context=".activities.AchievmentActivity">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/btn"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="40dp"
-        android:backgroundTint="@color/purple_500"
-        app:tint = "@color/white"
-        android:src="@drawable/test_image"/>
-
-    <GridView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/gridView"
-        android:numColumns="2"/>
+        android:orientation="vertical">
 
-</RelativeLayout>
+        <LinearLayout
+            android:layout_width="412dp"
+            android:layout_height="180dp"
+            android:gravity="center_vertical"
+            android:background="@drawable/gradient_background"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/profileTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:text="Achievements"
+                android:layout_marginStart="30dp"
+                android:textStyle="bold"
+                android:fontFamily="@font/mplus_rounded"
+                android:textColor="@color/white"
+                android:textAlignment="center"
+                android:textSize="27dp"/>
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/profileImageView"
+                android:layout_width="160dp"
+                android:layout_height="160dp"
+                android:layout_marginStart="40dp"
+                android:layout_marginEnd="50dp"
+                android:rotation="12"
+                app:shapeAppearance="@style/circular"
+                app:srcCompat="@drawable/achievement_logo"/>
+
+        </LinearLayout>
+
+        <GridView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/gridView"
+            android:numColumns="2"/>
+
+    </LinearLayout>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".activities.CategoriesActivity">
+
+        <com.google.android.material.bottomappbar.BottomAppBar
+            android:id="@+id/bottomAppBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            app:elevation="0dp"
+            android:backgroundTint="@color/transparent"
+            app:fabCradleMargin="20dp"
+            app:fabCradleRoundedCornerRadius="50dp">
+
+            <com.google.android.material.bottomnavigation.BottomNavigationView
+                android:id="@+id/bottomNavigationView"
+                android:layout_width="wrap_content"
+                android:layout_height="65dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="30dp"
+                android:background="@drawable/navbar_background"
+                app:labelVisibilityMode="labeled"
+                android:elevation="10dp"
+                app:itemIconSize="30dp"
+                app:itemTextColor="@color/white"
+                app:itemIconTint="@drawable/navbar_selector"
+                app:menu="@menu/bottom_menu_plus" />
+
+        </com.google.android.material.bottomappbar.BottomAppBar>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/plusCat"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:src="@drawable/add"
+            app:layout_anchor="@id/bottomAppBar"
+            app:maxImageSize="65dp"
+            android:contentDescription="@string/todo" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

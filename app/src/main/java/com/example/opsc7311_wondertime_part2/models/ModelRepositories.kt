@@ -12,10 +12,6 @@ object TimesheetRepository {
         return timesheetsList
     }
 
-    fun addTimesheet(timesheet: timesheetsModel) {
-        timesheetsList.add(timesheet)
-    }
-
     fun updateTotalHours(categoryName: String, duration: Int) {
         val user = FirebaseAuth.getInstance().currentUser
         val userId = user?.uid
@@ -47,6 +43,40 @@ object TimesheetRepository {
             )
         }
     }
+
+    fun subtractTotalHours(categoryName: String, duration: Int) {
+        val user = FirebaseAuth.getInstance().currentUser
+        val userId = user?.uid
+
+        userId?.let { uid ->
+            val database = FirebaseDatabase.getInstance()
+            val categoriesRef = database.getReference("Categories").child(uid)
+
+            categoriesRef.child(categoryName).child("totalHours").addListenerForSingleValueEvent(
+                object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        val currentTotalHours = dataSnapshot.getValue(Int::class.java) ?: 0
+                        val newTotalHours = (currentTotalHours - duration).coerceAtLeast(0)
+
+                        val categoryUpdates = mapOf<String, Any>(
+                            "totalHours" to newTotalHours
+                        )
+
+                        categoriesRef.child(categoryName).updateChildren(categoryUpdates)
+                            .addOnSuccessListener {
+                            }
+                            .addOnFailureListener { exception ->
+                            }
+                    }
+
+                    override fun onCancelled(databaseError: DatabaseError) {
+                    }
+                }
+            )
+        }
+    }
+
+
 
     fun updateDailyTotalHours(duration:Int){
         val user = FirebaseAuth.getInstance().currentUser

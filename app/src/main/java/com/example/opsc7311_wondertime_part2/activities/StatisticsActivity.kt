@@ -487,7 +487,7 @@ class StatisticsActivity : AppCompatActivity() {
     private val legendPadding = dimensionsOf(top = legendTopPaddingValue)
 
     private val chartColors = listOf(Color(0xFF6200EE))
-    private val chartColors2 = listOf(Color(0xFFFF2558),Color(0xFF00FFFF) )
+    private val chartColors2 = listOf(Color(0xffffbb00),Color(0xFF8A58EB) )
     private var daysOfWeek = ArrayList<String>()
     private lateinit var rangeInput: EditText
     private val labels = listOf("Total Hours")

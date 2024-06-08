@@ -21,7 +21,7 @@ class TimesheetAdapter(val c: Context, var timesheetList: List<timesheetsModel>)
         val endTime = v.findViewById<TextView>(R.id.EndTime)
         val Image = v.findViewById<ImageView>(R.id.image)
         val DuplicateImage = v.findViewById<ImageView>(R.id.duplicateIcon)
-
+        val deleteButton = v.findViewById<ImageView>(R.id.deleteIcon)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimeViewHolder {
@@ -54,6 +54,10 @@ class TimesheetAdapter(val c: Context, var timesheetList: List<timesheetsModel>)
 
         holder.DuplicateImage.setOnClickListener {
             (holder.itemView.context as TimesheetsActivity).showBottomDialog(newTimeSheet)
+        }
+
+        holder.deleteButton.setOnClickListener {
+            (holder.itemView.context as TimesheetsActivity).deleteTimesheet(newTimeSheet.id, newTimeSheet.duration)
         }
 
     }

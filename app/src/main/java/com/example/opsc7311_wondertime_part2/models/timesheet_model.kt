@@ -3,7 +3,7 @@ package com.example.opsc7311_wondertime_part2.models
 import android.net.Uri
 
 data class timesheetsModel(
-    val userId: String = "",
+    val id: String = "",
     val date : String = "",
     val startTime: String = "",
     val endTime: String ="",

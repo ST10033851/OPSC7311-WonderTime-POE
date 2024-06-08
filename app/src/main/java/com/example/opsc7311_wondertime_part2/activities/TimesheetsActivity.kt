@@ -77,7 +77,10 @@ class TimesheetsActivity : AppCompatActivity() {
         val binding: ActivityTimesheetsBinding = ActivityTimesheetsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        database = Firebase.database.reference.child("Timesheets")
+        val user = FirebaseAuth.getInstance().currentUser!!
+        val userId = user.uid
+
+        database = Firebase.database.reference.child("Timesheets").child(userId)
         storageRef = FirebaseStorage.getInstance().getReference("Images")
 
         requestCameraPermission()
@@ -158,6 +161,31 @@ class TimesheetsActivity : AppCompatActivity() {
 
 
     }
+
+    fun deleteTimesheet(timesheetId: String, duration:Int) {
+        val dialogBuilder = AlertDialog.Builder(this)
+        dialogBuilder.setMessage("Are you sure you want to delete this timesheet?")
+            .setCancelable(false)
+            .setPositiveButton("Yes") { dialog, id ->
+                val databaseReference = database.child(timesheetId)
+
+                databaseReference.removeValue().addOnSuccessListener {
+                    Toast.makeText(this, "Timesheet deleted successfully", Toast.LENGTH_SHORT).show()
+                    TimesheetRepository.subtractTotalHours(categoryName, duration)
+                    updateAdapter()
+                }.addOnFailureListener {
+                    Toast.makeText(this, "Failed to delete timesheet", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton("No") { dialog, id ->
+                dialog.dismiss()
+            }
+        val alert = dialogBuilder.create()
+        alert.setTitle("Delete Timesheet")
+        alert.show()
+    }
+
+
     private fun showRangePicker() {
 
         val materialDatePicker = MaterialDatePicker.Builder.dateRangePicker()
@@ -179,7 +207,6 @@ class TimesheetsActivity : AppCompatActivity() {
 
         materialDatePicker.show(supportFragmentManager, "tag")
     }
-
     private fun filterToDateRange(date1: String, date2: String){
         val errorDialog = Dialog(this)
         errorDialog.setContentView(R.layout.error_dialog)
@@ -216,7 +243,6 @@ class TimesheetsActivity : AppCompatActivity() {
         }
 
     }
-
     fun showBottomDialog(timesheet: timesheetsModel? = null) {
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -326,8 +352,8 @@ class TimesheetsActivity : AppCompatActivity() {
                 errorDialog.show()
             } else {
                 uploadImageToFirebase(imageUri) { downloadUrl ->
-                    val newTimesheet = timesheetsModel(uid, date, startTime, endTime, description, category, downloadUrl, Timesheetduration)
                     val newTimesheetRef = database.push()
+                    val newTimesheet = timesheetsModel(newTimesheetRef.key!!, date, startTime, endTime, description, category, downloadUrl, Timesheetduration)
                     newTimesheetRef.setValue(newTimesheet)
 
                     database.addValueEventListener(object : ValueEventListener {
@@ -366,7 +392,6 @@ class TimesheetsActivity : AppCompatActivity() {
         dialog.window!!.setGravity(Gravity.BOTTOM)
     }
 
-
     private fun uploadImageToFirebase(uri: Uri, onSuccess: (String) -> Unit) {
         val storageRef = FirebaseStorage.getInstance().reference
         val imagesRef = storageRef.child("images/${UUID.randomUUID()}.jpg")
@@ -380,7 +405,6 @@ class TimesheetsActivity : AppCompatActivity() {
             Toast.makeText(this, "Failed to upload image: ${exception.message}", Toast.LENGTH_SHORT).show()
         }
     }
-
 
     private val imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         if (uri != null) {
@@ -402,13 +426,11 @@ class TimesheetsActivity : AppCompatActivity() {
             Toast.makeText(this, "Failed to take picture", Toast.LENGTH_SHORT).show()
         }
     }
-
     private fun requestCameraPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), CAMERA_PERMISSION_REQUEST_CODE)
         }
     }
-
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
@@ -419,7 +441,6 @@ class TimesheetsActivity : AppCompatActivity() {
             }
         }
     }
-
     fun createImageUri(): Uri? {
         val image = File(externalCacheDir, "camera_image_${System.currentTimeMillis()}.jpg")
         return FileProvider.getUriForFile(

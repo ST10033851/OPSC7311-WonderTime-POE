@@ -205,7 +205,6 @@ class CategoriesActivity : AppCompatActivity() {
             errorDialog.dismiss()
         }
 
-        // Initialize views after inflating the dialog layout
         val name = dialog.findViewById<EditText>(R.id.categoryNameInput)
         val saveBtn = dialog.findViewById<TextView>(R.id.saveCategory)
         val colorInput = dialog.findViewById<ImageView>(R.id.uploadColor)
@@ -237,7 +236,6 @@ class CategoriesActivity : AppCompatActivity() {
 
                 val database = FirebaseDatabase.getInstance().getReference("Categories").child(userId)
 
-                // Use category name as the key
                 val newCategoryRef = database.child(newCategory.name)
                 newCategoryRef.setValue(newCategory)
 
@@ -280,10 +278,6 @@ class CategoriesActivity : AppCompatActivity() {
     private fun handleHomeNavigation(){
         startActivity(Intent(this, HomeActivity::class.java))
     }
-    private fun handleOtherNavigation(){
-        Toast.makeText(this, "Coming soon!", Toast.LENGTH_SHORT).show()
-    }
-
     private fun handleProfileNavigation() {
         startActivity(Intent(this, ProfileActivity::class.java))
     }

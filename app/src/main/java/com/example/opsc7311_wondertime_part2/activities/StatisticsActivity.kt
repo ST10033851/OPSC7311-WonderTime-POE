@@ -255,7 +255,6 @@ class StatisticsActivity : AppCompatActivity() {
             }
 
             override fun onCancelled(error: DatabaseError) {
-                // Handle error if needed
             }
         })
     }
@@ -349,7 +348,6 @@ class StatisticsActivity : AppCompatActivity() {
             }
 
             override fun onCancelled(error: DatabaseError) {
-                // Handle error if needed
             }
         })
     }
@@ -394,7 +392,6 @@ class StatisticsActivity : AppCompatActivity() {
             }
 
             override fun onCancelled(error: DatabaseError) {
-                // Handle error if needed
             }
         })
     }

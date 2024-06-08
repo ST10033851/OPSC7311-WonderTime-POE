@@ -436,7 +436,6 @@ class TimesheetsActivity : AppCompatActivity() {
         if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             } else {
-                // Permission denied, handle accordingly
                 Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show()
             }
         }
@@ -465,9 +464,6 @@ class TimesheetsActivity : AppCompatActivity() {
     }
     private fun handleCategoriesNavigation(){
         startActivity(Intent(this, CategoriesActivity::class.java))
-    }
-    private fun handleOtherNavigation(){
-        Toast.makeText(this, "Coming soon!", Toast.LENGTH_SHORT).show()
     }
     private fun handleProfileNavigation() {
         startActivity(Intent(this, ProfileActivity::class.java))

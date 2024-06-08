@@ -398,6 +398,9 @@ class TimesheetsActivity : AppCompatActivity() {
             imageView.setImageURI(photoUri)
             imageInput = photoUri
         }
+        else {
+            Toast.makeText(this, "Failed to take picture", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun requestCameraPermission() {
@@ -418,9 +421,9 @@ class TimesheetsActivity : AppCompatActivity() {
     }
 
     fun createImageUri(): Uri? {
-        val image = File(applicationContext.filesDir, "camera_image_${System.currentTimeMillis()}.jpg")
+        val image = File(externalCacheDir, "camera_image_${System.currentTimeMillis()}.jpg")
         return FileProvider.getUriForFile(
-            applicationContext,
+            this,
             "${applicationContext.packageName}.provider",
             image
         )

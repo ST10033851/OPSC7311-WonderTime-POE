@@ -18,20 +18,18 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.recyclerview.widget.LinearLayoutManager
 import antonkozyriatskyi.circularprogressindicator.CircularProgressIndicator
 import com.example.opsc7311_wondertime_part2.R
 import com.example.opsc7311_wondertime_part2.activities.ui.theme.OPSC7311_WonderTime_POETheme
-import com.example.opsc7311_wondertime_part2.adapters.TimesheetAdapter
 import com.example.opsc7311_wondertime_part2.databinding.ActivityStatisticsBinding
 import com.example.opsc7311_wondertime_part2.interfaces.rememberMarker
 import com.example.opsc7311_wondertime_part2.models.HomeModel
-import com.example.opsc7311_wondertime_part2.models.TimesheetRepository
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.firebase.Firebase
@@ -45,22 +43,25 @@ import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.column.columnChart
+import com.patrykandpatrick.vico.compose.chart.edges.rememberFadingEdges
 import com.patrykandpatrick.vico.compose.chart.line.lineChart
+import com.patrykandpatrick.vico.compose.component.shape.shader.fromBrush
 import com.patrykandpatrick.vico.compose.component.textComponent
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.compose.legend.legendItem
 import com.patrykandpatrick.vico.compose.legend.verticalLegend
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
+import com.patrykandpatrick.vico.core.DefaultAlpha
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.entry.composed.ComposedChartEntryModelProducer
 import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
 import com.patrykandpatrick.vico.core.chart.column.ColumnChart
 import com.patrykandpatrick.vico.core.chart.composed.plus
 import com.patrykandpatrick.vico.core.chart.line.LineChart
-import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes
+import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
 import com.patrykandpatrick.vico.core.entry.entriesOf
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -143,8 +144,8 @@ class StatisticsActivity : AppCompatActivity() {
     private fun populateLineGraph(startDate: String? = null, endDate: String? = null) {
         val minGoalsList = ArrayList<Int>()
         val maxGoalsList = ArrayList<Int>()
-        val cyanColor = Color(0xFF00FFFF)
-        val redColor = Color(0xFFFF2558)
+        val cyanColor = Color(0xFF8A58EB)
+        val redColor = Color(0xffffbb00)
         val composeView2 = findViewById<ComposeView>(R.id.compose_view2)
         var composedChartEntryModelProducer: ComposedChartEntryModelProducer? = null
 
@@ -192,7 +193,14 @@ class StatisticsActivity : AppCompatActivity() {
                             lines = listOf(
                                 LineChart.LineSpec(
                                     lineColor = cyanColor.toArgb(),
-                                    point = ShapeComponent(color = cyanColor.toArgb(), shape = Shapes.pillShape, strokeWidthDp = 1f)
+                                    lineBackgroundShader = DynamicShaders.fromBrush(
+                                        Brush.verticalGradient(
+                                            listOf(
+                                                cyanColor.copy(alpha = 0.2f),
+                                                cyanColor.copy(alpha = 0f),
+                                            ),
+                                        ),
+                                    ),
                                 )
                             )
                         )
@@ -200,7 +208,14 @@ class StatisticsActivity : AppCompatActivity() {
                             lines = listOf(
                                 LineChart.LineSpec(
                                     lineColor = redColor.toArgb(),
-                                    point = ShapeComponent(color = redColor.toArgb(), shape = Shapes.pillShape, strokeWidthDp = 1f)
+                                    lineBackgroundShader = DynamicShaders.fromBrush(
+                                        Brush.verticalGradient(
+                                            listOf(
+                                                redColor.copy(alpha = 0.2f),
+                                                redColor.copy(alpha = 0f),
+                                            ),
+                                        ),
+                                    ),
                                 )
                             )
                         )
@@ -227,6 +242,7 @@ class StatisticsActivity : AppCompatActivity() {
                                             title = "Date",
                                         ),
                                         legend = rememberLegend2(),
+                                        fadingEdges = rememberFadingEdges(),
                                         marker = rememberMarker(),
                                         modifier = Modifier.height(300.dp),
                                         runInitialAnimation = true

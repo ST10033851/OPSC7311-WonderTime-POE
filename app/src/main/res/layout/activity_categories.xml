@@ -93,6 +93,47 @@
                     android:contentDescription="@string/todo" />
 
             </LinearLayout>
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_marginStart="24dp"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="20dp"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:layout_width="90dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="20dp"
+                        android:id="@+id/ColorFilter"
+                        android:text="Color"
+                        android:backgroundTint="@color/purple"
+                        android:textAllCaps="false"
+                        />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:id="@+id/DescendingFilter"
+                        android:layout_marginEnd="20dp"
+                        android:text="Descending"
+                        android:backgroundTint="@color/purple"
+                        android:textAllCaps="false"
+                        />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:id="@+id/AscendingFilter"
+                        android:text="Ascending"
+                        android:backgroundTint="@color/purple"
+                        android:textAllCaps="false"
+                        />
+
+                </LinearLayout>
+            </HorizontalScrollView>
 
             <com.facebook.shimmer.ShimmerFrameLayout
                 android:id="@+id/shimmer_view_container"

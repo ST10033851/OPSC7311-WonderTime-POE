@@ -36,7 +36,7 @@ private fun initializeAchievementsForExistingUsers() {
             if (!snapshot.exists()) {
                 val defaultAchievements = listOf(
                     achievement_model("First Login", "https://firebasestorage.googleapis.com/v0/b/opsc7311-wondertime-part2.appspot.com/o/achievements%2FAchievement1.png?alt=media&token=542ce881-ffc5-4d53-9c36-ab48e909ea87", true),
-                    achievement_model("Add your 1st Timesheet", "https://firebasestorage.googleapis.com/v0/b/opsc7311-wondertime-part2.appspot.com/o/achievements%2FAchievement6.png?alt=media&token=c1d9289e-ae0a-4e07-82c0-6a29124598e9", true),
+                    achievement_model("Add your 1st Timesheet", "https://firebasestorage.googleapis.com/v0/b/opsc7311-wondertime-part2.appspot.com/o/achievements%2FAchievement6.png?alt=media&token=c1d9289e-ae0a-4e07-82c0-6a29124598e9", false),
                     achievement_model("Set a Goal", "https://firebasestorage.googleapis.com/v0/b/opsc7311-wondertime-part2.appspot.com/o/achievements%2FAchievement2.png?alt=media&token=5f1698cc-31bd-45f1-9cf8-8b891130c570", false) ,
                     achievement_model("Be among the first 10,000 users", "https://firebasestorage.googleapis.com/v0/b/opsc7311-wondertime-part2.appspot.com/o/achievements%2FAchievement5.png?alt=media&token=ecaf2450-dc58-4424-9d17-9a052b792997", true),
                     achievement_model("Take a photo with your camera", "https://firebasestorage.googleapis.com/v0/b/opsc7311-wondertime-part2.appspot.com/o/achievements%2FAchievement3.png?alt=media&token=e16870d9-9a3a-41ac-957d-a32fd347b435", false),

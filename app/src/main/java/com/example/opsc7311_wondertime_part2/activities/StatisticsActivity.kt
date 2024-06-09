@@ -130,10 +130,10 @@ class StatisticsActivity : AppCompatActivity() {
                     fetchDataForCurrentMonth()
 
                     findViewById<TextView>(R.id.NoDataText).visibility = View.GONE
-                    findViewById<TextView>(R.id.NoDataImage).visibility = View.GONE
+                    findViewById<ImageView>(R.id.NoDataImage).visibility = View.GONE
                 } else {
                     findViewById<TextView>(R.id.NoDataText).visibility = View.VISIBLE
-                    findViewById<TextView>(R.id.NoDataImage).visibility = View.VISIBLE
+                    findViewById<ImageView>(R.id.NoDataImage).visibility = View.VISIBLE
                 }
             }
 
@@ -234,6 +234,8 @@ class StatisticsActivity : AppCompatActivity() {
                             lines = listOf(
                                 LineChart.LineSpec(
                                     lineColor = cyanColor.toArgb(),
+                                    point = ShapeComponent(shape = Shapes.pillShape, color = cyanColor.toArgb()),
+                                    pointSizeDp = 8f,
                                     lineBackgroundShader = DynamicShaders.fromBrush(
                                         Brush.verticalGradient(
                                             listOf(
@@ -249,6 +251,8 @@ class StatisticsActivity : AppCompatActivity() {
                             lines = listOf(
                                 LineChart.LineSpec(
                                     lineColor = redColor.toArgb(),
+                                    point = ShapeComponent(shape = Shapes.pillShape, color = redColor.toArgb()),
+                                    pointSizeDp = 8f,
                                     lineBackgroundShader = DynamicShaders.fromBrush(
                                         Brush.verticalGradient(
                                             listOf(

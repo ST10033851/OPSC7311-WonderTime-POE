@@ -8,6 +8,7 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -123,7 +124,9 @@ class CategoriesActivity : AppCompatActivity() {
         }, 5000)
 
         binding.plusCat.setOnClickListener { showBottomDialog() }
-
+        binding.DescendingFilter.setOnClickListener{OrderByDescending()}
+        binding.AscendingFilter.setOnClickListener{OrderByAscending()}
+        filterByColor()
     }
 
     @SuppressLint("SetTextI18n")
@@ -187,6 +190,121 @@ class CategoriesActivity : AppCompatActivity() {
 
     }
 
+    fun filterByColor() {
+        val colorInput = findViewById<Button>(R.id.ColorFilter)
+
+        colorInput.setOnClickListener {
+            MaterialColorPickerDialog
+                .Builder(this)
+                .setTitle("Pick Color")
+                .setColorShape(ColorShape.SQAURE)
+                .setColorSwatch(ColorSwatch._300)
+                .setDefaultColor("#FFFFFF")
+                .setColorListener { color, colorHex ->
+                    Log.d("",color.toString() + colorHex)
+                    filterCategoriesByColor(colorHex)
+                }
+                .show()
+        }
+    }
+
+    private fun filterCategoriesByColor(selectedColorHex: String) {
+        val errorDialog = Dialog(this)
+        errorDialog.setContentView(R.layout.error_dialog)
+        errorDialog.setCancelable(false)
+        val errorMessageTextView = errorDialog.findViewById<TextView>(R.id.ErrorDescription)
+        errorMessageTextView.text = getString(R.string.there_are_no_categories_entered)
+
+        val dismissButton = errorDialog.findViewById<Button>(R.id.ErrorDone)
+        dismissButton.setOnClickListener {
+            errorDialog.dismiss()
+        }
+
+        if (categoriesList.isEmpty()) {
+            errorDialog.show()
+        } else {
+            val filteredCategories = ArrayList(categoriesList.filter {
+                it.color.equals(selectedColorHex, ignoreCase = true)
+            })
+
+            if (filteredCategories.isEmpty()) {
+                errorMessageTextView.text =
+                    getString(R.string.you_do_not_have_any_categories_with_that_color)
+                errorDialog.show()
+            } else {
+
+                categoryAdapter = categoryAdapter(this, filteredCategories)
+                recyclerView.adapter = categoryAdapter
+                recyclerView.layoutManager = LinearLayoutManager(this)
+                categoryAdapter.notifyDataSetChanged()
+            }
+        }
+    }
+    private fun OrderByDescending() {
+        val errorDialog = Dialog(this)
+        errorDialog.setContentView(R.layout.error_dialog)
+        errorDialog.setCancelable(false)
+        val errorMessageTextView = errorDialog.findViewById<TextView>(R.id.ErrorDescription)
+        errorMessageTextView.text = getString(R.string.there_are_no_categories_entered)
+
+        val dismissButton = errorDialog.findViewById<Button>(R.id.ErrorDone)
+        dismissButton.setOnClickListener {
+            errorDialog.dismiss()
+        }
+
+        if (categoriesList.isEmpty()) {
+            errorDialog.show()
+        } else {
+            val orderedCategories = ArrayList(categoriesList.sortedByDescending {
+                it.name
+            })
+
+            if (orderedCategories.isEmpty()) {
+                errorMessageTextView.text =
+                    getString(R.string.you_do_not_have_any_categories_with_that_color)
+                errorDialog.show()
+            } else {
+
+                categoryAdapter = categoryAdapter(this, orderedCategories)
+                recyclerView.adapter = categoryAdapter
+                recyclerView.layoutManager = LinearLayoutManager(this)
+                categoryAdapter.notifyDataSetChanged()
+            }
+        }
+    }
+
+    private fun OrderByAscending() {
+        val errorDialog = Dialog(this)
+        errorDialog.setContentView(R.layout.error_dialog)
+        errorDialog.setCancelable(false)
+        val errorMessageTextView = errorDialog.findViewById<TextView>(R.id.ErrorDescription)
+        errorMessageTextView.text = getString(R.string.there_are_no_categories_entered)
+
+        val dismissButton = errorDialog.findViewById<Button>(R.id.ErrorDone)
+        dismissButton.setOnClickListener {
+            errorDialog.dismiss()
+        }
+
+        if (categoriesList.isEmpty()) {
+            errorDialog.show()
+        } else {
+            val orderedCategories = ArrayList(categoriesList.sortedBy {
+                it.name
+            })
+
+            if (orderedCategories.isEmpty()) {
+                errorMessageTextView.text =
+                    getString(R.string.you_do_not_have_any_categories_with_that_color)
+                errorDialog.show()
+            } else {
+
+                categoryAdapter = categoryAdapter(this, orderedCategories)
+                recyclerView.adapter = categoryAdapter
+                recyclerView.layoutManager = LinearLayoutManager(this)
+                categoryAdapter.notifyDataSetChanged()
+            }
+        }
+    }
 
     private fun showBottomDialog() {
         val dialog = Dialog(this)

@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import com.example.opsc7311_wondertime_part2.R
 import com.example.opsc7311_wondertime_part2.databinding.ActivityLoginBinding
+import com.example.opsc7311_wondertime_part2.interfaces.onAchievementsFeatureAccessed
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 
@@ -40,6 +41,7 @@ class LoginActivity : AppCompatActivity() {
                             Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show()
                             val intent = Intent(this, HomeActivity::class.java)
                             startActivity(intent)
+                            onAchievementsFeatureAccessed()
                             finish()
                         }
                         else

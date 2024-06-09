@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -13,7 +14,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -30,6 +34,7 @@ import com.example.opsc7311_wondertime_part2.activities.ui.theme.OPSC7311_Wonder
 import com.example.opsc7311_wondertime_part2.databinding.ActivityStatisticsBinding
 import com.example.opsc7311_wondertime_part2.interfaces.rememberMarker
 import com.example.opsc7311_wondertime_part2.models.HomeModel
+import com.example.opsc7311_wondertime_part2.models.TimesheetRepository.getTimesheetsList
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.firebase.Firebase
@@ -45,6 +50,7 @@ import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.column.columnChart
 import com.patrykandpatrick.vico.compose.chart.edges.rememberFadingEdges
 import com.patrykandpatrick.vico.compose.chart.line.lineChart
+import com.patrykandpatrick.vico.compose.chart.scroll.rememberChartScrollState
 import com.patrykandpatrick.vico.compose.component.shape.shader.fromBrush
 import com.patrykandpatrick.vico.compose.component.textComponent
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
@@ -109,14 +115,50 @@ class StatisticsActivity : AppCompatActivity() {
             }
         }
         StatisticsRangePicker.setOnClickListener{ showRangePicker() }
-        populateBarChart()
-        populateLineGraph()
-        fetchDataForCurrentMonth()
-
+        checkDataAndPopulateGraphs()
 
     }
 
+    private fun checkDataAndPopulateGraphs() {
+        val databaseReference = database
+
+        databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    populateBarChart()
+                    populateLineGraph()
+                    fetchDataForCurrentMonth()
+
+                    findViewById<TextView>(R.id.NoDataText).visibility = View.GONE
+                    findViewById<TextView>(R.id.NoDataImage).visibility = View.GONE
+                } else {
+                    findViewById<TextView>(R.id.NoDataText).visibility = View.VISIBLE
+                    findViewById<TextView>(R.id.NoDataImage).visibility = View.VISIBLE
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+            }
+        })
+    }
+
+
     private fun showRangePicker() {
+        if (getTimesheetsList().isEmpty()) {
+            val errorDialog = Dialog(this)
+            errorDialog.setContentView(R.layout.error_dialog)
+            errorDialog.setCancelable(false)
+            val errorMessageTextView = errorDialog.findViewById<TextView>(R.id.ErrorDescription)
+            errorMessageTextView.text = getString(R.string.there_are_no_timesheets_entered)
+
+            val dismissButton = errorDialog.findViewById<Button>(R.id.ErrorDone)
+            dismissButton.setOnClickListener {
+                errorDialog.dismiss()
+            }
+
+            errorDialog.show()
+            return
+        }
 
         val materialDatePicker = MaterialDatePicker.Builder.dateRangePicker()
             .setSelection(androidx.core.util.Pair(
@@ -134,11 +176,11 @@ class StatisticsActivity : AppCompatActivity() {
             populateBarChart(date1, date2)
             populateLineGraph(date1, date2)
             rangeInput.setText(getString(R.string.to, date1, date2))
-
         }
 
         materialDatePicker.show(supportFragmentManager, "tag")
     }
+
 
 
     private fun populateLineGraph(startDate: String? = null, endDate: String? = null) {
@@ -188,7 +230,6 @@ class StatisticsActivity : AppCompatActivity() {
                         add(entriesOf(*minGoalsList.mapIndexed { index, value -> index to value.toFloat() }.toTypedArray()))
                     }
                     composeView2.setContent {
-
                         val lineChart = lineChart(
                             lines = listOf(
                                 LineChart.LineSpec(
@@ -225,7 +266,7 @@ class StatisticsActivity : AppCompatActivity() {
                                 color = Color.Transparent
                             ) {
                                 Box(
-                                    modifier = Modifier
+                                    modifier = Modifier.fillMaxWidth()
                                 ) {
                                     Chart(
                                         chart = remember(lineChart, lineChart2) { lineChart + lineChart2 },
@@ -234,15 +275,15 @@ class StatisticsActivity : AppCompatActivity() {
                                         bottomAxis = rememberBottomAxis(
                                             titleComponent = textComponent(
                                                 color = Color.Black,
+                                                typeface = Typeface.MONOSPACE,
                                                 padding = axisTitlePadding,
                                                 margins = bottomAxisTitleMargins,
-                                                typeface = Typeface.MONOSPACE,
                                             ),
+
                                             valueFormatter = bottomAxisValueFormatter,
                                             title = "Date",
                                         ),
                                         legend = rememberLegend2(),
-                                        fadingEdges = rememberFadingEdges(),
                                         marker = rememberMarker(),
                                         modifier = Modifier.height(300.dp),
                                         runInitialAnimation = true
@@ -308,7 +349,7 @@ class StatisticsActivity : AppCompatActivity() {
                             columns = listOf(
                                 LineComponent(
                                     color = purpleColor.toArgb(),
-                                    thicknessDp = 8f,
+                                    thicknessDp = 10f,
                                     shape = Shapes.cutCornerShape(25,25, 0,0)
                                 )
                             )

@@ -11,6 +11,7 @@ import android.widget.TextView
 import android.widget.Toast
 import com.example.opsc7311_wondertime_part2.R
 import com.example.opsc7311_wondertime_part2.databinding.ActivityRegisterBinding
+import com.example.opsc7311_wondertime_part2.interfaces.initializeAchievementsForUser
 import com.google.firebase.auth.FirebaseAuth
 
 //Android Knowledge. (2022, October 27).
@@ -43,6 +44,9 @@ class RegisterActivity : AppCompatActivity() {
                                 Toast.makeText(this, "Registration Successful", Toast.LENGTH_SHORT).show()
                                 val intent = Intent(this, LoginActivity::class.java)
                                 startActivity(intent)
+                                val user = FirebaseAuth.getInstance().currentUser
+                                val userId = user!!.uid
+                                initializeAchievementsForUser(userId)
                                 finish()
                             } else {
                                 // Shows an error message on registration failure

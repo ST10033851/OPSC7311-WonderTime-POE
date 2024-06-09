@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -21,6 +22,7 @@ import android.view.Window
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -29,9 +31,12 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.opsc7311_wondertime_part2.R
 import com.example.opsc7311_wondertime_part2.adapters.TimesheetAdapter
 import com.example.opsc7311_wondertime_part2.databinding.ActivityTimesheetsBinding
+import com.example.opsc7311_wondertime_part2.interfaces.updateFirstCameraAchievement
+import com.example.opsc7311_wondertime_part2.interfaces.updateFirstTimesheetAchievement
 import com.example.opsc7311_wondertime_part2.models.TimesheetRepository
 import com.example.opsc7311_wondertime_part2.models.timesheetsModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -253,13 +258,20 @@ class TimesheetsActivity : AppCompatActivity() {
         val startTimeInput = dialog.findViewById<EditText>(R.id.StartTimeInput)
         val endTimeInput = dialog.findViewById<EditText>(R.id.EndTimeInput)
         val CategoryInput = categoryName
+        imageView = dialog.findViewById(R.id.UploadImage)
+
+        var imageUri: Uri? = null
+        var imageUrl: String? = null
 
         timesheet?.let {
             dateInput.setText(it.date)
             descriptionInput.setText(it.description)
             startTimeInput.setText(it.startTime)
             endTimeInput.setText(it.endTime)
-            imageInput = Uri.parse(it.imageUri)
+            imageUrl = it.imageUri
+            Glide.with(this)
+                .load(it.imageUri)
+                .into(imageView)
         }
 
         val saveBtn = dialog.findViewById<TextView>(R.id.saveTimesheet)
@@ -311,7 +323,7 @@ class TimesheetsActivity : AppCompatActivity() {
         }
 
         uploadImageBtn.setOnClickListener {
-            imageView = dialog.findViewById(R.id.UploadImage)
+
             val options = arrayOf("Choose from Gallery", "Take Photo")
             AlertDialog.Builder(this)
                 .setTitle("Select Image")
@@ -330,12 +342,16 @@ class TimesheetsActivity : AppCompatActivity() {
         saveBtn.setOnClickListener {
             val date = dateInput.text.toString()
             val description = descriptionInput.text.toString()
+            val progressBar = dialog.findViewById<ProgressBar>(R.id.progressBar)
             val startTime = startTimeInput.text.toString()
             val endTime = endTimeInput.text.toString()
             val category = CategoryInput
             val imageUri = imageInput
             val user = FirebaseAuth.getInstance().currentUser
             val uid = user!!.uid
+
+            saveBtn.visibility = View.GONE
+            progressBar.visibility = View.VISIBLE
 
             if (date.isEmpty() || description.isEmpty() || startTime.isEmpty() || endTime.isEmpty()) {
                 val errorDialog = Dialog(this)
@@ -347,37 +363,40 @@ class TimesheetsActivity : AppCompatActivity() {
                 val dismissButton = errorDialog.findViewById<Button>(R.id.ErrorDone)
                 dismissButton.setOnClickListener {
                     errorDialog.dismiss()
+                    saveBtn.visibility = View.VISIBLE
+                    progressBar.visibility = View.GONE
                 }
 
                 errorDialog.show()
             } else {
-                uploadImageToFirebase(imageUri) { downloadUrl ->
+                createOrDuplicateTimesheet(
+                    imageUri,
+                    date,
+                    startTime,
+                    endTime,
+                    description,
+                    category,
+                    imageUrl
+                ) { imageUrl ->
                     val newTimesheetRef = database.push()
-                    val newTimesheet = timesheetsModel(newTimesheetRef.key!!, date, startTime, endTime, description, category, downloadUrl, Timesheetduration)
-                    newTimesheetRef.setValue(newTimesheet)
-
-                    database.addValueEventListener(object : ValueEventListener {
-                        override fun onDataChange(dataSnapshot: DataSnapshot) {
-                            timesheetsList.clear()
-                            if (dataSnapshot.exists()) {
-                                for (studentsnapshot in dataSnapshot.children) {
-                                    val studentModel = studentsnapshot.getValue(timesheetsModel::class.java)
-                                    timesheetsList.add(studentModel!!)
-                                }
-                                timesheetAdapter.notifyDataSetChanged()
-                            }
+                    val newTimesheet = timesheetsModel(
+                        uid, date, startTime, endTime, description, category, imageUrl, Timesheetduration
+                    )
+                    newTimesheetRef.setValue(newTimesheet).addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            TimesheetRepository.updateTotalHours(categoryName, Timesheetduration)
+                            TimesheetRepository.updateDailyTotalHours(Timesheetduration)
+                            updateFirstTimesheetAchievement(uid)
+                            updateAdapter()
+                            dialog.dismiss()
+                        } else {
+                            Toast.makeText(this, "Failed to save timesheet", Toast.LENGTH_SHORT).show()
                         }
-
-                        override fun onCancelled(databaseError: DatabaseError) {
-                            Toast.makeText(this@TimesheetsActivity, databaseError.toString(), Toast.LENGTH_SHORT).show()
-                        }
-                    })
-
-                    TimesheetRepository.updateTotalHours(categoryName, Timesheetduration)
-                    TimesheetRepository.updateDailyTotalHours(Timesheetduration)
-                    updateAdapter()
-                    dialog.dismiss()
+                        saveBtn.visibility = View.VISIBLE
+                        progressBar.visibility = View.GONE
+                    }
                 }
+
             }
         }
 
@@ -390,6 +409,28 @@ class TimesheetsActivity : AppCompatActivity() {
         dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
         dialog.window!!.setGravity(Gravity.BOTTOM)
+
+
+    }
+    private fun createOrDuplicateTimesheet(
+        imageUri: Uri?,
+        date: String,
+        startTime: String,
+        endTime: String,
+        description: String,
+        category: String,
+        imageUrl: String?,
+        onComplete: (String) -> Unit
+    ) {
+        if (imageUrl != null) {
+            onComplete(imageUrl)
+        } else if (imageUri != null) {
+            uploadImageToFirebase(imageUri) { downloadUrl ->
+                onComplete(downloadUrl)
+            }
+        } else {
+            onComplete("")
+        }
     }
 
     private fun uploadImageToFirebase(uri: Uri, onSuccess: (String) -> Unit) {
@@ -421,6 +462,9 @@ class TimesheetsActivity : AppCompatActivity() {
         if (success) {
             imageView.setImageURI(photoUri)
             imageInput = photoUri
+            val user = FirebaseAuth.getInstance().currentUser!!
+            val userId = user.uid
+            updateFirstCameraAchievement(userId)
         }
         else {
             Toast.makeText(this, "Failed to take picture", Toast.LENGTH_SHORT).show()

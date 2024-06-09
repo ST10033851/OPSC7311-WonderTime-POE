@@ -46,6 +46,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/gridView"
+            android:layout_marginBottom="100dp"
             android:numColumns="2"/>
 
     </LinearLayout>
@@ -77,19 +78,9 @@
                 app:itemIconSize="30dp"
                 app:itemTextColor="@color/white"
                 app:itemIconTint="@drawable/navbar_selector"
-                app:menu="@menu/bottom_menu_plus" />
+                app:menu="@menu/bottom_menu" />
 
         </com.google.android.material.bottomappbar.BottomAppBar>
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/plusCat"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
-            android:src="@drawable/add"
-            app:layout_anchor="@id/bottomAppBar"
-            app:maxImageSize="65dp"
-            android:contentDescription="@string/todo" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

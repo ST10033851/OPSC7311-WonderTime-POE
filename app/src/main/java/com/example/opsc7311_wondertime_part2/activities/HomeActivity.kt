@@ -13,10 +13,12 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.opsc7311_wondertime_part2.R
+import com.example.opsc7311_wondertime_part2.interfaces.updateFirstGoalAchievement
 import com.example.opsc7311_wondertime_part2.models.HomeRepository
 import com.example.opsc7311_wondertime_part2.models.TimesheetRepository
 import com.example.opsc7311_wondertime_part2.models.HomeModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.imageview.ShapeableImageView
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -24,6 +26,10 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
+import com.google.firebase.database.ktx.database
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import com.squareup.picasso.Picasso
 import nl.joery.timerangepicker.TimeRangePicker
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -42,6 +48,10 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var maxcheckImage: ImageView
     private lateinit var TimepickerBtn: TimeRangePicker
     private lateinit var database: DatabaseReference
+    private lateinit var  storageRef: StorageReference
+    private lateinit var auth: FirebaseAuth
+    private lateinit var databaseRef: DatabaseReference
+    private lateinit var profileImageView: ShapeableImageView
     //Droppers. (2021). TimeRangePicker [GitHub Repository]. Retrieved from https://github.com/Droppers/TimeRangePicker
 
     @SuppressLint("SetTextI18n")
@@ -53,6 +63,7 @@ class HomeActivity : AppCompatActivity() {
         database = Firebase.database.reference.child("DailyHours").child(userId)
 
         val bottomNav: BottomNavigationView = findViewById(R.id.bottomNavigationView)
+        profileImageView = findViewById(R.id.ProfileImageHome)
         val saveDailyGoalBtn = findViewById<Button>(R.id.saveDailyGoal)
         val minTimeDisplay: TextView = findViewById(R.id.MinTimeDisplay)
         val maxTimeDisplay: TextView = findViewById(R.id.MaxTimeDisplay)
@@ -135,8 +146,13 @@ class HomeActivity : AppCompatActivity() {
 
                 else -> false
             }
-        }
 
+        }
+        getProfileImage()
+
+        profileImageView.setOnClickListener(){
+            handleProfileNavigation()
+        }
         TimepickerBtn.setOnTimeChangeListener(object : TimeRangePicker.OnTimeChangeListener {
 
             override fun onStartTimeChange(endTime: TimeRangePicker.Time) {
@@ -155,10 +171,6 @@ class HomeActivity : AppCompatActivity() {
                 goalDuration = maxGoalTime - minGoalTime
             }
         })
-        val themeSelectorImageView = findViewById<ImageView>(R.id.themeSelecter)
-        themeSelectorImageView.setOnClickListener {
-            handleOtherNavigation()
-        }
 
         val achievementsSelectorImageView = findViewById<ImageView>(R.id.achievements)
         achievementsSelectorImageView.setOnClickListener {
@@ -214,7 +226,24 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun handleOtherNavigation() {
-        Toast.makeText(this, "Coming soon!", Toast.LENGTH_SHORT).show()
+        startActivity(Intent(this, AchievmentActivity::class.java))
+    }
+
+    private fun getProfileImage()
+    {
+        storageRef = FirebaseStorage.getInstance().reference.child("ProfileImages")
+        auth = FirebaseAuth.getInstance()
+        databaseRef = com.google.firebase.ktx.Firebase.database.reference.child("Users").child(auth.currentUser?.uid!!)
+        databaseRef.child("profileImageUri").get()
+            .addOnSuccessListener{
+                val imageUri = it.value as? String
+                imageUri?.let { uri ->
+                    Picasso.get().load(uri).into(profileImageView)
+                }
+            }
+            .addOnFailureListener{
+                Toast.makeText(this, "Failed to load profile image", Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun showGoalConfirmationDialog() {
@@ -244,6 +273,8 @@ class HomeActivity : AppCompatActivity() {
     private fun saveDailyGoal() {
         val minTimeDisplay: TextView = findViewById(R.id.MinTimeDisplay)
         val maxTimeDisplay: TextView = findViewById(R.id.MaxTimeDisplay)
+        val user = FirebaseAuth.getInstance().currentUser!!
+        val userId = user.uid
         val min = minGoalTime
         val max = maxGoalTime
 
@@ -253,6 +284,7 @@ class HomeActivity : AppCompatActivity() {
 
         val newDailyGoal = HomeModel(min, max, formattedDate, 0)
         HomeRepository.addDailyGoal(newDailyGoal)
+        updateFirstGoalAchievement(userId)
 
         val newCategoryRef = database.push()
         newCategoryRef.setValue(newDailyGoal)

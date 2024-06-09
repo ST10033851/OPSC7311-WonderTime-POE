@@ -100,9 +100,33 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:gravity="center_horizontal"
                         android:layout_marginStart="10dp"
                         android:layout_marginEnd="10dp"
                         android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/NoDataText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
+                            android:fontFamily="@font/mplus_rounded"
+                            android:text="Your currently have no goals saved, so we can't show you any statistics"
+                            android:textColor="@color/black"
+                            android:textSize="18sp"
+                            android:layout_marginStart="24dp"
+                            android:layout_marginBottom="15dp"
+                            android:visibility="gone"
+                            android:textStyle="bold" />
+
+                        <ImageView
+                            android:id="@+id/NoDataImage"
+                            android:layout_width="200dp"
+                            android:layout_marginTop="30dp"
+                            android:layout_height="200dp"
+                            android:contentDescription="na"
+                            android:visibility="gone"
+                            android:src="@drawable/not_found">
+
+                        </ImageView>
 
                         <androidx.compose.ui.platform.ComposeView
                             android:id="@+id/compose_view"
@@ -157,6 +181,7 @@
                             app:progressCap="round"
                             app:progressStrokeWidth="16dp"
                             app:textColor="#3D13FB"
+                            app:direction="clockwise"
                             app:enableProgressAnimation="true"/>
                     </LinearLayout>
 

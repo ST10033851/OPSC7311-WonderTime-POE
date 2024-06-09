@@ -9,6 +9,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.opsc7311_wondertime_part2.R
 import com.google.android.material.imageview.ShapeableImageView
 import android.net.Uri
+import android.view.WindowManager
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
@@ -56,7 +57,7 @@ class ProfileActivity : AppCompatActivity()
             insets
         }
         val bottomNav: BottomNavigationView = findViewById(R.id.bottomNavigationView)
-        bottomNav.selectedItemId = R.id.home
+        bottomNav.selectedItemId = R.id.profile
 
         bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
@@ -192,18 +193,13 @@ class ProfileActivity : AppCompatActivity()
                 }
             })
 
-            val timesheetRef = databaseRef.child("Timesheets")
-            var numTimesheets = 0
+            val user2 = FirebaseAuth.getInstance().currentUser!!
+            val userId = user2.uid
+            val timesheetRef = databaseRef.child("Timesheets").child(userId)
 
             timesheetRef.addListenerForSingleValueEvent(object : ValueEventListener{
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    snapshot.children.forEach{ timesheetSnapshot ->
-                        val timesheetUserID = timesheetSnapshot.child("userId").getValue(String::class.java)
-                        if(timesheetUserID == user.uid)
-                        {
-                            numTimesheets++
-                        }
-                    }
+                    val numTimesheets = snapshot.childrenCount.toInt()
                     numberOfTimeSheets.setText(numTimesheets.toString())
                 }
                 override fun onCancelled(error: DatabaseError) {
@@ -224,23 +220,21 @@ class ProfileActivity : AppCompatActivity()
                     TODO("Not yet implemented")
                 }
             })
-            val timesheetsRef = databaseRef.child("Timesheets")
+            val timesheetsRef = databaseRef.child("Timesheets").child(userId)
             var hoursWorked = 0
 
             timesheetsRef.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     snapshot.children.forEach { timesheetSnapshot ->
-                        val timesheetUserID = timesheetSnapshot.child("userId").getValue(String::class.java)
                         val duration = timesheetSnapshot.child("duration").getValue(Int::class.java)
 
-                        if (timesheetUserID == user.uid && duration != null) {
+                        if (duration != null) {
                             hoursWorked += duration
                         }
                     }
                     totalHoursWorked.setText(hoursWorked.toString())
                 }
                 override fun onCancelled(error: DatabaseError) {
-                    // Handle error
                 }
             })
         }
@@ -251,14 +245,18 @@ class ProfileActivity : AppCompatActivity()
     }
     private fun handleProfileNavigation() {
         startActivity(Intent(this, ProfileActivity::class.java))
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+
     }
 
     private fun handleGraphNavigation() {
         startActivity(Intent(this, StatisticsActivity::class.java))
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
     private fun handleCategoriesNavigation(){
         startActivity(Intent(this, CategoriesActivity::class.java))
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
     private fun handleOtherNavigation(){
         Toast.makeText(this, "Coming soon!", Toast.LENGTH_SHORT).show()

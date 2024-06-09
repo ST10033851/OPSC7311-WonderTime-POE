@@ -215,18 +215,22 @@ class HomeActivity : AppCompatActivity() {
 
     private fun handleProfileNavigation() {
         startActivity(Intent(this, ProfileActivity::class.java))
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
     private fun handleGraphNavigation() {
         startActivity(Intent(this, StatisticsActivity::class.java))
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
     private fun handleCategoriesNavigation() {
         startActivity(Intent(this, CategoriesActivity::class.java))
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
     private fun handleOtherNavigation() {
         startActivity(Intent(this, AchievmentActivity::class.java))
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
     private fun getProfileImage()

@@ -60,17 +60,21 @@ class AchievmentActivity : AppCompatActivity() {
 
     private fun handleCategoriesNavigation() {
         startActivity(Intent(this, CategoriesActivity::class.java))
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
     private fun handleHomeNavigation(){
         startActivity(Intent(this, HomeActivity::class.java))
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
     private fun handleProfileNavigation() {
         startActivity(Intent(this, ProfileActivity::class.java))
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
     private fun handleGraphNavigation() {
         startActivity(Intent(this, StatisticsActivity::class.java))
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
     private fun fetchAchievementsFromFirebase() {

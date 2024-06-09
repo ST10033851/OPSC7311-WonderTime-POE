@@ -46,7 +46,7 @@
                     android:id="@+id/selectImageView"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:layout_marginLeft="225dp"
+                    android:layout_marginStart="20dp"
                     android:layout_marginTop="-45dp"
                     app:srcCompat="@drawable/camera_image"/>
             </LinearLayout>

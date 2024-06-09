@@ -17,7 +17,7 @@
         android:layout_marginTop="15dp"
         android:layout_marginStart="10dp"
         android:layout_marginBottom="10dp"
-        android:layout_marginEnd="20dp"
+        android:layout_marginEnd="10dp"
         app:cardCornerRadius="15dp"
         app:cardElevation="8dp">
 
@@ -31,20 +31,23 @@
                 android:layout_height="240dp"
                 android:gravity="center_horizontal"
                 android:orientation="vertical"
-                tools:ignore="MissingConstraints">
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
+                    android:id="@+id/AchievementHeading"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/AchievementHeading"
-                    android:text="First Timesheet"
-                    android:textSize="14sp"
-                    android:gravity="center"
-                    android:textColor="@color/black"
-                    android:fontFamily="@font/mplus_rounded"
-                    android:textStyle="bold"
                     android:layout_marginTop="15dp"
-                    android:layout_marginBottom="10dp"/>
+                    android:layout_marginBottom="10dp"
+                    android:fontFamily="@font/mplus_rounded"
+                    android:gravity="center"
+                    android:text="First Timesheet"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
 
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/image"
@@ -54,8 +57,7 @@
                     android:orientation="vertical"
                     android:scaleType="centerCrop"
                     android:src="@drawable/test_image"
-                    app:shapeAppearanceOverlay="@style/RoundedSquare"
-                    />
+                    app:shapeAppearanceOverlay="@style/RoundedSquare" />
 
                 <antonkozyriatskyi.circularprogressindicator.CircularProgressIndicator
                     android:id="@+id/progressBar"
@@ -63,25 +65,25 @@
                     android:layout_height="40dp"
                     android:layout_gravity="center"
                     android:layout_marginTop="20dp"
-                    app:progressColor="@color/purple"
-                    app:progressCap="round"
-                    app:progressStrokeWidth="5dp"
-                    app:textColor="#3D13FB"
-                    app:enableProgressAnimation="true"
+                    android:visibility="gone"
                     app:direction="clockwise"
-                    android:visibility="gone"/>
+                    app:enableProgressAnimation="true"
+                    app:progressCap="round"
+                    app:progressColor="@color/purple"
+                    app:progressStrokeWidth="5dp"
+                    app:textColor="#3D13FB" />
 
                 <TextView
+                    android:id="@+id/AchievementCaption"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/AchievementCaption"
-                    android:text="completed"
+                    android:layout_marginTop="20dp"
                     android:fontFamily="@font/mplus_rounded"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
                     android:gravity="center"
+                    android:text="completed"
                     android:textColor="@color/gray"
-                    android:layout_marginTop="20dp"/>
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
             </LinearLayout>
 

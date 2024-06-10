@@ -28,10 +28,6 @@ WonderTimes features part of the Final Part of the POE:
 
 ## GitHub Repositories
 - https://github.com/ST10033851/OPSC7311-WonderTime-Part2.git
-- https://github.com/ST10033851/OPSC7311-WonderTime-Part2.git
-- https://github.com/ST10033851/OPSC7311-WonderTime-Part2.git
-- https://github.com/ST10033851/OPSC7311-WonderTime-Part2.git
-- https://github.com/ST10033851/OPSC7311-WonderTime-Part2.gitygwkebafhkgfuoewg,jbeJGBUOWEdfslbnknbipenBKNMNBOJNKLNBLFNKLNDLXKNBDLSFCXBFNRPWNEIPBN3 U# OPSC7311-WonderTime-Part2
 
 ## Contributors
 - ST10033851 - Jereshan Sinan

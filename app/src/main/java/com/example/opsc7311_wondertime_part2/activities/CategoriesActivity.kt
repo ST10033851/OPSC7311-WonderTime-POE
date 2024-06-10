@@ -170,20 +170,23 @@ class CategoriesActivity : AppCompatActivity() {
         else{
             rangeInput.setText(getString(R.string.to, date1, date2))
             val timesheetsList = TimesheetRepository.getTimesheetsList()
+            Log.d("",timesheetsList.toString())
             val timesheetsFiltered = timesheetsList.filter {
                 val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
                 val itemDate = dateFormat.parse(it.date)
                 val startDate = dateFormat.parse(date1)
                 val endDate = dateFormat.parse(date2)
 
-                itemDate != null && !itemDate.after(startDate) && !itemDate.before(endDate)
+                itemDate != null && !itemDate.before(startDate) && !itemDate.after(endDate)
             }
+
 
             for (category in categoriesList) {
                 calcTotalHours(category.name, timesheetsFiltered)
             }
 
             categoryAdapter.notifyDataSetChanged()
+            categoryAdapter = categoryAdapter(this, categoriesList)
             recyclerView.adapter = categoryAdapter
             recyclerView.layoutManager = LinearLayoutManager(this)
         }

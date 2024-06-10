@@ -1,4 +1,5 @@
 package com.example.opsc7311_wondertime_part2.models
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import java.text.SimpleDateFormat
@@ -10,6 +11,25 @@ object TimesheetRepository {
 
     fun getTimesheetsList(): ArrayList<timesheetsModel> {
         return timesheetsList
+    }
+
+    fun fetchTimesheetsFromDatabase(userId: String) {
+        val databaseReference = FirebaseDatabase.getInstance().getReference("Timesheets").child(userId)
+        databaseReference.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                timesheetsList.clear()
+                for (snapshot in dataSnapshot.children) {
+                    val timesheet = snapshot.getValue(timesheetsModel::class.java)
+                    if (timesheet != null) {
+                        timesheetsList.add(timesheet)
+                    }
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+
+            }
+        })
     }
 
     fun updateTotalHours(categoryName: String, duration: Int) {
@@ -75,7 +95,6 @@ object TimesheetRepository {
             )
         }
     }
-
 
 
     fun updateDailyTotalHours(duration:Int){

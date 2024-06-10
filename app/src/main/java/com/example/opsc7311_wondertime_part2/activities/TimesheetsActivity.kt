@@ -14,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -38,6 +37,7 @@ import com.example.opsc7311_wondertime_part2.databinding.ActivityTimesheetsBindi
 import com.example.opsc7311_wondertime_part2.interfaces.updateFirstCameraAchievement
 import com.example.opsc7311_wondertime_part2.interfaces.updateFirstTimesheetAchievement
 import com.example.opsc7311_wondertime_part2.models.TimesheetRepository
+import com.example.opsc7311_wondertime_part2.models.TimesheetRepository.fetchTimesheetsFromDatabase
 import com.example.opsc7311_wondertime_part2.models.timesheetsModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -84,6 +84,7 @@ class TimesheetsActivity : AppCompatActivity() {
 
         val user = FirebaseAuth.getInstance().currentUser!!
         val userId = user.uid
+        fetchTimesheetsFromDatabase(userId)
 
         database = Firebase.database.reference.child("Timesheets").child(userId)
         storageRef = FirebaseStorage.getInstance().getReference("Images")
@@ -172,15 +173,23 @@ class TimesheetsActivity : AppCompatActivity() {
         dialogBuilder.setMessage("Are you sure you want to delete this timesheet?")
             .setCancelable(false)
             .setPositiveButton("Yes") { dialog, id ->
-                val databaseReference = database.child(timesheetId)
+                val query = database.orderByChild("id").equalTo(timesheetId)
+                query.addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        for (timesheetSnapshot in dataSnapshot.children) {
+                            timesheetSnapshot.ref.removeValue().addOnSuccessListener {
+                                TimesheetRepository.subtractTotalHours(categoryName, duration)
+                                Toast.makeText(this@TimesheetsActivity, "Timesheet deleted successfully", Toast.LENGTH_SHORT).show()
+                            }.addOnFailureListener {
+                                Toast.makeText(this@TimesheetsActivity, "Failed to delete timesheet", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
 
-                databaseReference.removeValue().addOnSuccessListener {
-                    Toast.makeText(this, "Timesheet deleted successfully", Toast.LENGTH_SHORT).show()
-                    TimesheetRepository.subtractTotalHours(categoryName, duration)
-                    updateAdapter()
-                }.addOnFailureListener {
-                    Toast.makeText(this, "Failed to delete timesheet", Toast.LENGTH_SHORT).show()
-                }
+                    override fun onCancelled(databaseError: DatabaseError) {
+                        Toast.makeText(this@TimesheetsActivity, "Failed to delete timesheet", Toast.LENGTH_SHORT).show()
+                    }
+                })
             }
             .setNegativeButton("No") { dialog, id ->
                 dialog.dismiss()
@@ -345,7 +354,6 @@ class TimesheetsActivity : AppCompatActivity() {
             val progressBar = dialog.findViewById<ProgressBar>(R.id.progressBar)
             val startTime = startTimeInput.text.toString()
             val endTime = endTimeInput.text.toString()
-            val category = CategoryInput
             val imageUri = imageInput
             val user = FirebaseAuth.getInstance().currentUser
             val uid = user!!.uid
@@ -375,12 +383,21 @@ class TimesheetsActivity : AppCompatActivity() {
                     startTime,
                     endTime,
                     description,
-                    category,
-                    imageUrl
+                    CategoryInput,
+                    imageUrl,
+                    Timesheetduration
                 ) { imageUrl ->
                     val newTimesheetRef = database.push()
+                    Timesheetduration = endTime.substring(0, 2).replace(":", "").toInt()- startTime.substring(0, 2).replace(":", "").toInt()
                     val newTimesheet = timesheetsModel(
-                        uid, date, startTime, endTime, description, category, imageUrl, Timesheetduration
+                        newTimesheetRef.key!!,
+                        date,
+                        startTime,
+                        endTime,
+                        description,
+                        CategoryInput,
+                        imageUrl,
+                        Timesheetduration
                     )
                     newTimesheetRef.setValue(newTimesheet).addOnCompleteListener { task ->
                         if (task.isSuccessful) {
@@ -390,7 +407,8 @@ class TimesheetsActivity : AppCompatActivity() {
                             updateAdapter()
                             dialog.dismiss()
                         } else {
-                            Toast.makeText(this, "Failed to save timesheet", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "Failed to save timesheet", Toast.LENGTH_SHORT)
+                                .show()
                         }
                         saveBtn.visibility = View.VISIBLE
                         progressBar.visibility = View.GONE
@@ -420,6 +438,7 @@ class TimesheetsActivity : AppCompatActivity() {
         description: String,
         category: String,
         imageUrl: String?,
+        TimesheetDuration: Int,
         onComplete: (String) -> Unit
     ) {
         if (imageUrl != null) {

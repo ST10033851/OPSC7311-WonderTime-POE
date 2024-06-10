@@ -83,20 +83,20 @@ class HomeActivity : AppCompatActivity() {
 
         var goalDuration: Int = 0
 
-        val totalDurationToday = timesheetsList.filter {
-            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            val itemDate = dateFormat.parse(it.date)
-            itemDate?.time == currentDate
-        }.sumOf { it.duration }
+        var totalDurationToday = 0.0
 
         database.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val dailyGoals = ArrayList<HomeModel>()
+                val todayDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
 
                 for (snapshot in dataSnapshot.children) {
                     val goal = snapshot.getValue(HomeModel::class.java)
                     if (goal?.date == todayDate) {
-                        goal?.let { dailyGoals.add(it) }
+                        goal?.let {
+                            dailyGoals.add(it)
+                            totalDurationToday += it.totalHours
+                        }
                     }
                 }
 
@@ -116,10 +116,13 @@ class HomeActivity : AppCompatActivity() {
                         maxcheckImage = findViewById(R.id.maxCheckMark)
                         maxcheckImage.visibility = View.VISIBLE
                     }
+                } else {
+                    Toast.makeText(this@HomeActivity, "No daily goals for today.", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
+                Toast.makeText(this@HomeActivity, "Failed to retrieve data.", Toast.LENGTH_SHORT).show()
             }
         })
 

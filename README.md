@@ -37,4 +37,8 @@ WonderTimes features part of the Final Part of the POE:
 
 
 ## References:
-
+- Retrieve Image from Firebase Database and Display in GridView in Android Studio using Java. 2023. YouTube video, added by Android knowledge. [Online]. Available at: https://www.youtube.com/watch?v=nHzOSXZuwfQ[Accessed 1 June 2024].
+- Login and Signup using Firebase Authentication in Android Studio | Kotlin. 2023. YouTube video, added by Android knowledge. [Online]. Available at: https://www.youtube.com/watch?v=A4Vj4cHsQjE [Accessed 10 May 2024].
+- Simple Profile App in Android Studio | 2023. 2023. YouTube video, added by UiLover Android. [Online]. Available at: https://www.youtube.com/watch?v=xxW5xxkNtrM [Accessed 15 May 2024].
+- Pick Image From Gallery In Android Studio | Image Picker | Image Picker Library In Android | Java. 2023. YouTube video, added by WL Project. [Online]. Available at: https://www.youtube.com/watch?v=v6YvUxpgSYQ [Accessed 1 June 2024].
+- How to Implement Dark Mode Theme in Android Studio | Custom Switch | Modern Dashboard. 2023. YouTube video, added by Android knowledge. [Online]. Available at: https://www.youtube.com/watch?v=94gvVpGsap8&t=1s [Accessed 1 June 2024].

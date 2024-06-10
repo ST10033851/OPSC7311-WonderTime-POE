@@ -4,7 +4,7 @@
 WonderTime is an innovative time management application designed to deliver a functional and seamless user experience. Inspired by extensive research and developed with the latest technologies, WonderTime is equipped with a variety of features to help you track time, manage projects, and increase productivity effectively.
 
 ## Features
-WonderTimes features:
+WonderTimes features part of Part 2 of the POE:
 - **Home**: Start tracking your time straight after logging in - setting your minimum and maximum goal fo the day.
 - **Categories**: Organize your projects into color-coded categories for easy tracking and monitoring for different projects0..
 - **Timesheets**: After creating a Category, you can create Timesheets which enable you track hours for certain parts of a project which form part of your chosen Category. 
@@ -15,8 +15,6 @@ WonderTimes features part of the Final Part of the POE:
 - **Profiles**: View your profile which includes your email, number of Categories, number of Timesheets, number of goals and  total hours worked.
 - **Delete and Duplicate Timesheets**: Edit Timesheets by either choosing to duplicate it or delete it.
 - **Analytics**: View your work hours and project progress over selectable time periods through graphs and progress bars.
-
-## Installation
 
 ## Usage
 1. **Launch the Application**: Upon opening WonderTime, you will see the loading screen followed by the login screen.
